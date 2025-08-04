@@ -8,12 +8,12 @@ operation:
     preSQL: ""
     testsEnabled: true
     truncateBefore: false
-    materializationType: table
   database: ""
   deployEnabled: true
   description: "Implements SCD2 logic with active flag tracking"
   isMultisource: false
   locationName: SRC
+  materializationType: table
   metadata:
     appliedNodeTests: []
     columns: []
@@ -55,7 +55,10 @@ operation:
             nodeName: TODAYS_DATA
           - locationName: SRC
             nodeName: DC_POC
+        join:
+          joinCondition: ""
         name: scd_merge
+        noLinkRefs: []
   name: scd_merge
   overrideSQL: true
   schema: ""
