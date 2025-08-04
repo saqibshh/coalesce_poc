@@ -45,7 +45,7 @@ operation:
         nullable: false
         sourceColumnReferences:
           - columnReferences: []
-            transform: "TODAYS_DATA".id
+            transform: id
       - appliedColumnTests: {}
         columnReference:
           columnCounter: name-col
@@ -58,7 +58,7 @@ operation:
         nullable: true
         sourceColumnReferences:
           - columnReferences: []
-            transform: "TODAYS_DATA".name
+            transform: name
       - appliedColumnTests: {}
         columnReference:
           columnCounter: active-col
@@ -84,7 +84,7 @@ operation:
         nullable: false
         sourceColumnReferences:
           - columnReferences: []
-            transform: changes.created_at
+            transform: CURRENT_TIMESTAMP()
       - appliedColumnTests: {}
         columnReference:
           columnCounter: updated-col
