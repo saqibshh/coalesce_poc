@@ -42,7 +42,7 @@ operation:
           columnCounter: id-col
           stepCounter: f47b2a3c-8d15-4f9e-b234-a1b2c3d4e5f6
         sourceColumnReferences:
-          - transform: "id"
+          - transform: "changes.id"
             columnReferences: []
       - name: NAME
         dataType: VARCHAR(16777216)
@@ -53,7 +53,7 @@ operation:
           columnCounter: name-col
           stepCounter: f47b2a3c-8d15-4f9e-b234-a1b2c3d4e5f6
         sourceColumnReferences:
-          - transform: "name"
+          - transform: "changes.name"
             columnReferences: []
       - name: ACTIVE
         dataType: BOOLEAN
@@ -75,7 +75,7 @@ operation:
           columnCounter: created-col
           stepCounter: f47b2a3c-8d15-4f9e-b234-a1b2c3d4e5f6
         sourceColumnReferences:
-          - transform: "CURRENT_TIMESTAMP()"
+          - transform: "changes.created_at"
             columnReferences: []
       - name: UPDATED_AT
         dataType: TIMESTAMP_NTZ(9)
@@ -86,9 +86,29 @@ operation:
           columnCounter: updated-col
           stepCounter: f47b2a3c-8d15-4f9e-b234-a1b2c3d4e5f6
         sourceColumnReferences:
-          - transform: "CURRENT_TIMESTAMP()"
+          - transform: "changes.updated_at"
             columnReferences: []
-    cteString: ""
+    cteString: |-
+      changes AS (
+        SELECT
+          COALESCE(TODAYS_DATA.id, DC_POC.id) AS id,
+          TODAYS_DATA.name AS new_name,
+          DC_POC.name AS old_name,
+          CASE 
+            WHEN DC_POC.id IS NULL THEN 'INSERT'
+            WHEN TODAYS_DATA.id IS NULL THEN 'DELETE'
+            WHEN MD5(TO_JSON(OBJECT_CONSTRUCT('name', TODAYS_DATA.name))) 
+               != MD5(TO_JSON(OBJECT_CONSTRUCT('name', DC_POC.name))) THEN 'UPDATE'
+            ELSE 'NO_CHANGE'
+          END AS change_type,
+          TODAYS_DATA.name,
+          CURRENT_TIMESTAMP() AS created_at,
+          CURRENT_TIMESTAMP() AS updated_at
+        FROM {{ ref('SRC', 'TODAYS_DATA') }} TODAYS_DATA
+        FULL OUTER JOIN {{ ref('SRC', 'DC_POC') }} DC_POC
+          ON TODAYS_DATA.id = DC_POC.id
+         AND DC_POC.active = TRUE
+      )
     enabledColumnTestIDs: []
     sourceMapping:
       - aliases:
@@ -103,34 +123,10 @@ operation:
             nodeName: DC_POC
         join:
           joinCondition: |-
-            WITH changes AS (
-              SELECT
-                COALESCE(new.id, old.id) AS id,
-                new.name AS new_name,
-                old.name AS old_name,
-                CASE 
-                  WHEN old.id IS NULL THEN 'INSERT'
-                  WHEN new.id IS NULL THEN 'DELETE'
-                  WHEN MD5(TO_JSON(OBJECT_CONSTRUCT('name', new.name))) 
-                     != MD5(TO_JSON(OBJECT_CONSTRUCT('name', old.name))) THEN 'UPDATE'
-                  ELSE 'NO_CHANGE'
-                END AS change_type,
-                new.name,
-                CURRENT_TIMESTAMP() AS created_at,
-                CURRENT_TIMESTAMP() AS updated_at
-              FROM {{ ref('SRC', 'TODAYS_DATA') }} AS new
-              FULL OUTER JOIN {{ ref('SRC', 'DC_POC') }} AS old
-                ON new.id = old.id
-               AND old.active = TRUE
-            )
-            SELECT
-              id,
-              name,
-              TRUE AS active,
-              created_at,
-              updated_at
-            FROM changes
-            WHERE change_type IN ('INSERT', 'UPDATE')
+            FROM {{ ref('SRC', 'TODAYS_DATA') }} "TODAYS_DATA"
+            FULL OUTER JOIN {{ ref('SRC', 'DC_POC') }} "DC_POC"
+              ON TODAYS_DATA.id = DC_POC.id
+             AND DC_POC.active = TRUE
         name: scd_merge
         noLinkRefs: []
   name: scd_merge
