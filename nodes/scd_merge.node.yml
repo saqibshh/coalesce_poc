@@ -1,10 +1,10 @@
-id: scd2_merge
-name: SCD2 Merge
-displayName: SCD2 Merge
+id: scd_merge
+name: SCD Merge
+displayName: SCD Merge
 fileVersion: 1
 type: Node
 operation: model
-description: Inserts changed or new rows and marks old rows as inactive
+description: Implements SCD2 logic with active flag tracking
 build: incremental
 mergeConfig:
   keys:
@@ -32,25 +32,21 @@ overrides:
         COALESCE(new.id, old.id) AS id,
         new.name AS new_name,
         old.name AS old_name,
-
         CASE 
           WHEN old.id IS NULL THEN 'INSERT'
           WHEN new.id IS NULL THEN 'DELETE'
           WHEN MD5(TO_JSON(OBJECT_CONSTRUCT('name', new.name))) 
-             != MD5(TO_JSON(OBJECT_CONSTRUCT('name', old.name))) THEN 'UPDATE'
+               != MD5(TO_JSON(OBJECT_CONSTRUCT('name', old.name))) THEN 'UPDATE'
           ELSE 'NO_CHANGE'
         END AS change_type,
-
         new.name,
         CURRENT_TIMESTAMP() AS created_at,
         CURRENT_TIMESTAMP() AS updated_at
-
       FROM {{ ref('SRC', 'TODAYS_DATA') }} AS new
       FULL OUTER JOIN {{ ref('DW', 'SCD_TARGET') }} AS old
         ON new.id = old.id
        AND old.active = TRUE
     )
-
     SELECT
       id,
       name,
@@ -58,4 +54,4 @@ overrides:
       created_at,
       updated_at
     FROM changes
-    WHERE change_type IN ('INSERT', 'UPDATE');
+    WHERE change_type IN ('INSERT', 'UPDATE')
