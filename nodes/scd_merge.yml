@@ -1,59 +1,61 @@
-version: 1
-node:
-  name: scd2_merge
-  type: model
-  display_name: SCD2 Merge
-  description: Inserts changed or new rows and marks old rows as inactive
-  build: incremental
-  merge_keys:
+id: scd2_merge
+name: SCD2 Merge
+displayName: SCD2 Merge
+fileVersion: 1
+type: Node
+operation: model
+description: Inserts changed or new rows and marks old rows as inactive
+build: incremental
+mergeConfig:
+  keys:
     - id
-  insert_filter: change_type IN ('INSERT', 'UPDATE')
-  update_filter: change_type = 'UPDATE'
-  columns_to_update:
+  insertFilter: change_type IN ('INSERT', 'UPDATE')
+  updateFilter: change_type = 'UPDATE'
+  columnsToUpdate:
     active: FALSE
     updated_at: CURRENT_TIMESTAMP()
-  insert_columns:
+  insertColumns:
     - id
     - name
     - active
     - created_at
     - updated_at
-  inputs:
-    - name: TODAYS_DATA
-      ref: SRC.TODAYS_DATA
-    - name: SCD_TARGET
-      ref: DW.SCD_TARGET
-  overrides:
-    sql: |
-      WITH changes AS (
-        SELECT
-          COALESCE(new.id, old.id) AS id,
-          new.name AS new_name,
-          old.name AS old_name,
-
-          CASE 
-            WHEN old.id IS NULL THEN 'INSERT'
-            WHEN new.id IS NULL THEN 'DELETE'
-            WHEN MD5(TO_JSON(OBJECT_CONSTRUCT('name', new.name))) 
-               != MD5(TO_JSON(OBJECT_CONSTRUCT('name', old.name))) THEN 'UPDATE'
-            ELSE 'NO_CHANGE'
-          END AS change_type,
-
-          new.name,
-          CURRENT_TIMESTAMP() AS created_at,
-          CURRENT_TIMESTAMP() AS updated_at
-
-        FROM {{ ref('SRC', 'TODAYS_DATA') }} AS new
-        FULL OUTER JOIN {{ ref('DW', 'SCD_TARGET') }} AS old
-          ON new.id = old.id
-         AND old.active = TRUE
-      )
-
+inputs:
+  - name: TODAYS_DATA
+    ref: SRC.TODAYS_DATA
+  - name: SCD_TARGET
+    ref: DW.SCD_TARGET
+overrides:
+  sql: |
+    WITH changes AS (
       SELECT
-        id,
-        name,
-        TRUE AS active,
-        created_at,
-        updated_at
-      FROM changes
-      WHERE change_type IN ('INSERT', 'UPDATE');
+        COALESCE(new.id, old.id) AS id,
+        new.name AS new_name,
+        old.name AS old_name,
+
+        CASE 
+          WHEN old.id IS NULL THEN 'INSERT'
+          WHEN new.id IS NULL THEN 'DELETE'
+          WHEN MD5(TO_JSON(OBJECT_CONSTRUCT('name', new.name))) 
+             != MD5(TO_JSON(OBJECT_CONSTRUCT('name', old.name))) THEN 'UPDATE'
+          ELSE 'NO_CHANGE'
+        END AS change_type,
+
+        new.name,
+        CURRENT_TIMESTAMP() AS created_at,
+        CURRENT_TIMESTAMP() AS updated_at
+
+      FROM {{ ref('SRC', 'TODAYS_DATA') }} AS new
+      FULL OUTER JOIN {{ ref('DW', 'SCD_TARGET') }} AS old
+        ON new.id = old.id
+       AND old.active = TRUE
+    )
+
+    SELECT
+      id,
+      name,
+      TRUE AS active,
+      created_at,
+      updated_at
+    FROM changes
+    WHERE change_type IN ('INSERT', 'UPDATE');
