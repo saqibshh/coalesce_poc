@@ -8,6 +8,8 @@ operation:
     preSQL: ""
     testsEnabled: true
     truncateBefore: false
+    businessKeyColumns:
+      - id
   database: ""
   deployEnabled: true
   description: "Implements SCD2 logic with active flag tracking"
@@ -62,7 +64,7 @@ operation:
   name: scd_merge
   overrideSQL: true
   schema: ""
-  sqlType: ""
+  sqlType: "Dimension"
   type: sql
   version: 1
 type: Node
