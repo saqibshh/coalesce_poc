@@ -45,7 +45,7 @@ operation:
         nullable: false
         sourceColumnReferences:
           - columnReferences: []
-            transform: id
+            transform: COALESCE("TODAYS_DATA".id, "DC_POC".id)
       - appliedColumnTests: {}
         columnReference:
           columnCounter: name-col
@@ -58,7 +58,7 @@ operation:
         nullable: true
         sourceColumnReferences:
           - columnReferences: []
-            transform: name
+            transform: COALESCE("TODAYS_DATA".name, "DC_POC".name)
       - appliedColumnTests: {}
         columnReference:
           columnCounter: active-col
