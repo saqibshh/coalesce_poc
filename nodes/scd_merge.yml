@@ -8,6 +8,20 @@ operation:
     preSQL: ""
     testsEnabled: true
     truncateBefore: false
+    mergeConfig:
+      keys:
+        - id
+      insertFilter: change_type IN ('INSERT', 'UPDATE')
+      updateFilter: change_type = 'UPDATE'
+      columnsToUpdate:
+        active: FALSE
+        updated_at: CURRENT_TIMESTAMP()
+      insertColumns:
+        - id
+        - name
+        - active
+        - created_at
+        - updated_at
   database: ""
   deployEnabled: true
   description: "Implements SCD2 logic with active flag tracking"
