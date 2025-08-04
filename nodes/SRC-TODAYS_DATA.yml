@@ -1,0 +1,110 @@
+fileVersion: 1
+id: 35f0fb33-38ca-4588-a97c-cc8cc07afdce
+name: TODAYS_DATA
+operation:
+  config:
+    postSQL: ""
+    preSQL: ""
+    testsEnabled: true
+  database: ""
+  deployEnabled: true
+  description: ""
+  isMultisource: false
+  locationName: SRC
+  materializationType: table
+  metadata:
+    appliedNodeTests: []
+    columns:
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: 0b809ad5-4221-4bc9-988d-26231e2c8e88
+          stepCounter: 35f0fb33-38ca-4588-a97c-cc8cc07afdce
+        config: {}
+        dataType: NUMBER(38,0)
+        description: ""
+        name: ID
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: a113c05c-a59e-45a1-94e5-f8686fb434bd
+                stepCounter: 0dc5b497-f032-4303-86aa-d31dafa0e2a1
+            transform: ""
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: 5c3bbdf3-e2ba-4055-a064-19b965445aa7
+          stepCounter: 35f0fb33-38ca-4588-a97c-cc8cc07afdce
+        config: {}
+        dataType: VARCHAR(16777216)
+        description: ""
+        name: NAME
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: 5e0ab23d-471f-4de4-95bc-652fd748d9be
+                stepCounter: 0dc5b497-f032-4303-86aa-d31dafa0e2a1
+            transform: ""
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: 071c7e58-f957-4959-abed-eb5fe4f7378c
+          stepCounter: 35f0fb33-38ca-4588-a97c-cc8cc07afdce
+        config: {}
+        dataType: VARCHAR(16777216)
+        description: ""
+        name: YEAR
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: 69cd2d29-31cf-421e-b16e-89c619cdd6ca
+                stepCounter: 0dc5b497-f032-4303-86aa-d31dafa0e2a1
+            transform: ""
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: 48fba612-a978-4edd-844c-74b8fce0fd4e
+          stepCounter: 35f0fb33-38ca-4588-a97c-cc8cc07afdce
+        config: {}
+        dataType: VARCHAR(16777216)
+        description: ""
+        name: MONTH
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: 5ad14ca4-02cb-43ca-aa81-bd30e7740f84
+                stepCounter: 0dc5b497-f032-4303-86aa-d31dafa0e2a1
+            transform: ""
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: 3f3f2532-0173-44a9-a436-be179786a5a0
+          stepCounter: 35f0fb33-38ca-4588-a97c-cc8cc07afdce
+        config: {}
+        dataType: VARCHAR(16777216)
+        description: ""
+        name: DAY
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: 6e31075f-a169-49b4-9a9f-4b5cb70b843c
+                stepCounter: 0dc5b497-f032-4303-86aa-d31dafa0e2a1
+            transform: ""
+    cteString: ""
+    enabledColumnTestIDs: []
+    sourceMapping:
+      - aliases:
+          EXT_DC_POC_TABLE1: 0dc5b497-f032-4303-86aa-d31dafa0e2a1
+        customSQL:
+          customSQL: ""
+        dependencies:
+          - locationName: SRC
+            nodeName: EXT_DC_POC_TABLE1
+        join:
+          joinCondition: |-
+            FROM {{ ref('SRC', 'EXT_DC_POC_TABLE1') }} "EXT_DC_POC_TABLE1"
+            WHERE TO_DATE(year || '-' || month || '-' || day, 'YYYY-MM-DD') = CURRENT_DATE
+        name: TODAYS_DATA
+        noLinkRefs: []
+  name: TODAYS_DATA
+  overrideSQL: false
+  schema: ""
+  sqlType: Fact
+  type: sql
+  version: 1
+type: Node

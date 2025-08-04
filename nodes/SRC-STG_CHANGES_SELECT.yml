@@ -1,0 +1,124 @@
+fileVersion: 1
+id: ad9ebfd3-0b11-4c2e-9005-ecf84f52102b
+name: STG_CHANGES_SELECT
+operation:
+  config:
+    insertStrategy: INSERT
+    postSQL: ""
+    preSQL: ""
+    testsEnabled: true
+    truncateBefore: true
+  database: ""
+  deployEnabled: true
+  description: ""
+  isMultisource: false
+  locationName: SRC
+  materializationType: table
+  metadata:
+    appliedNodeTests: []
+    columns:
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: 8d302e7e-45d8-497e-adfb-1c121ec80323
+          stepCounter: ad9ebfd3-0b11-4c2e-9005-ecf84f52102b
+        config: {}
+        dataType: NUMBER(38,0)
+        description: ""
+        name: ID
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: e183c17c-f368-4084-b9d3-1d2a6ac3ad72
+                stepCounter: 2a732845-52de-4616-a7ae-9df805e82bb0
+            transform: ""
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: d4b74b7e-52df-4e8c-b02c-1883fbca946d
+          stepCounter: ad9ebfd3-0b11-4c2e-9005-ecf84f52102b
+        config: {}
+        dataType: BOOLEAN
+        description: ""
+        name: ACTIVE
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: 9dde3295-5403-480d-939a-7846e36f9ae9
+                stepCounter: 2a732845-52de-4616-a7ae-9df805e82bb0
+            transform: ""
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: cbedf122-b478-47b3-9e30-f61c022ca417
+          stepCounter: ad9ebfd3-0b11-4c2e-9005-ecf84f52102b
+        config: {}
+        dataType: TIMESTAMP_NTZ(9)
+        description: ""
+        name: CREATED_AT
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: db731dc7-2bc2-48e9-b1cb-f53f315a4846
+                stepCounter: 2a732845-52de-4616-a7ae-9df805e82bb0
+            transform: ""
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: aeaa7697-e402-4b54-bac7-cf6106a3c979
+          stepCounter: ad9ebfd3-0b11-4c2e-9005-ecf84f52102b
+        config: {}
+        dataType: TIMESTAMP_NTZ(9)
+        description: ""
+        name: UPDATED_AT
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: 6a99dec9-c9b1-436d-b548-aa9189eb1c3f
+                stepCounter: 2a732845-52de-4616-a7ae-9df805e82bb0
+            transform: ""
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: 6b9f93bb-b094-4676-a2d4-dadc6a1411da
+          stepCounter: ad9ebfd3-0b11-4c2e-9005-ecf84f52102b
+        config: {}
+        dataType: STRING
+        description: ""
+        name: change_type
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: e769ed07-ec1b-4eb3-bde4-95e2bf0f32ad
+                stepCounter: 2a732845-52de-4616-a7ae-9df805e82bb0
+            transform: ""
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: 4071a027-b8de-477a-93c1-2b7bf6eedb02
+          stepCounter: ad9ebfd3-0b11-4c2e-9005-ecf84f52102b
+        config: {}
+        dataType: STRING
+        description: ""
+        name: name
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: ea158b49-ad3f-415b-83b3-11b7d777a022
+                stepCounter: 2a732845-52de-4616-a7ae-9df805e82bb0
+            transform: ""
+    cteString: ""
+    enabledColumnTestIDs: []
+    sourceMapping:
+      - aliases:
+          STG_CHANGES: 2a732845-52de-4616-a7ae-9df805e82bb0
+        customSQL:
+          customSQL: ""
+        dependencies:
+          - locationName: SRC
+            nodeName: STG_CHANGES
+        join:
+          joinCondition: FROM {{ ref('SRC', 'STG_CHANGES') }} "STG_CHANGES" WHERE "change_type" = TRUE
+        name: STG_CHANGES_SELECT
+        noLinkRefs: []
+  name: STG_CHANGES_SELECT
+  overrideSQL: false
+  schema: ""
+  sqlType: Stage
+  type: sql
+  version: 1
+type: Node

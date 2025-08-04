@@ -1,0 +1,14 @@
+build: test
+merge_keys:
+  - id
+insert_filter: change_type IN ('INSERT', 'UPDATE')
+update_filter: change_type = 'UPDATE'
+columns_to_update:
+  active: FALSE
+  updated_at: CURRENT_TIMESTAMP()
+insert_columns:
+  - id
+  - name
+  - active
+  - created_at
+  - updated_at

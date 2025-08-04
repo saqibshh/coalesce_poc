@@ -1,0 +1,6 @@
+excludeSelector: ""
+fileVersion: 1
+id: "3"
+includeSelector: "{ location: SRC name: EXT_DC_POC_TABLE1 } OR { location: SRC name: FCT_EXT_DC_POC_TABLE1 } OR { location: SRC name: TODAYS_DATA } OR { location: SRC name: YESTERDAYS_DATA } OR { location: SRC name: FCT_TODAYS_DATA_YESTERDAYS_DATA } OR { location: SRC name: DC_POC } OR { location: SRC name: STG_DC_POC } OR { location: SRC name: STG_CHANGES } OR { location: SRC name: STG_TODAYS_DATA_YESTERDAYS_DATA } OR { location: SRC name: STG_EXT_DC_POC_TABLE1 } OR { location: SRC name: STG_TODAYS_DATA_DC_POC }"
+name: New Job
+type: Job

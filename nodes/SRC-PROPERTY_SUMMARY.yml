@@ -1,0 +1,187 @@
+fileVersion: 1
+id: ce0146c3-7972-4916-8739-d222246c98ca
+name: PROPERTY_SUMMARY
+operation:
+  database: ""
+  deployEnabled: true
+  description: ""
+  locationName: SRC
+  metadata:
+    columns:
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: 22f94f09-a99f-4b38-aeee-8f9fc082fdb3
+          stepCounter: ce0146c3-7972-4916-8739-d222246c98ca
+        config: {}
+        dataType: VARCHAR(16777216)
+        defaultValue: ""
+        description: ""
+        name: REGION
+        nullable: true
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: 5e2f48f7-b330-43a3-bfd8-b5f2f08a4bc4
+          stepCounter: ce0146c3-7972-4916-8739-d222246c98ca
+        config: {}
+        dataType: VARCHAR(16777216)
+        defaultValue: ""
+        description: ""
+        name: LOCALITY
+        nullable: true
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: 6d1c3a13-95d9-4322-9302-1237921b2207
+          stepCounter: ce0146c3-7972-4916-8739-d222246c98ca
+        config: {}
+        dataType: VARCHAR(16777216)
+        defaultValue: ""
+        description: ""
+        name: PROPERTY_TYPE
+        nullable: true
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: 3311d4e3-0ffa-43b6-9cee-6f11f4ab76e9
+          stepCounter: ce0146c3-7972-4916-8739-d222246c98ca
+        config: {}
+        dataType: NUMBER(38,0)
+        defaultValue: ""
+        description: ""
+        name: COUNT_OF_PROPERTIES
+        nullable: true
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: 2a9b7bbe-fe9a-4e16-9832-8fb824a7dfb2
+          stepCounter: ce0146c3-7972-4916-8739-d222246c98ca
+        config: {}
+        dataType: FLOAT
+        defaultValue: ""
+        description: ""
+        name: AVG_PRICE
+        nullable: true
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: fd210338-5562-4722-a8d9-4cbb6788d93d
+          stepCounter: ce0146c3-7972-4916-8739-d222246c98ca
+        config: {}
+        dataType: FLOAT
+        defaultValue: ""
+        description: ""
+        name: AVG_AREA
+        nullable: true
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: c4fb65fa-8345-41f7-937d-fc33a42fc79a
+          stepCounter: ce0146c3-7972-4916-8739-d222246c98ca
+        config: {}
+        dataType: FLOAT
+        defaultValue: ""
+        description: ""
+        name: AVG_BEDROOM_NUM
+        nullable: true
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: f309ee2d-9467-4e4b-841a-2f1bc3895945
+          stepCounter: ce0146c3-7972-4916-8739-d222246c98ca
+        config: {}
+        dataType: ARRAY
+        defaultValue: ""
+        description: ""
+        name: PROPERTY_IDS
+        nullable: true
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: 928b06dc-a460-4e20-8ae1-1a9515b11547
+          stepCounter: ce0146c3-7972-4916-8739-d222246c98ca
+        config: {}
+        dataType: TIMESTAMP_NTZ(9)
+        defaultValue: ""
+        description: ""
+        name: TIMESTAMP
+        nullable: true
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+  name: PROPERTY_SUMMARY
+  schema: ""
+  sqlType: Source
+  type: sourceInput
+  version: 1
+type: Node

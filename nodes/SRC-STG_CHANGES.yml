@@ -1,0 +1,210 @@
+fileVersion: 1
+id: 2a732845-52de-4616-a7ae-9df805e82bb0
+name: STG_CHANGES
+operation:
+  config:
+    insertStrategy: INSERT
+    postSQL: ""
+    preSQL: ""
+    testsEnabled: true
+    truncateBefore: true
+  database: ""
+  deployEnabled: true
+  description: ""
+  isMultisource: false
+  locationName: SRC
+  materializationType: table
+  metadata:
+    appliedNodeTests: []
+    columns:
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: e183c17c-f368-4084-b9d3-1d2a6ac3ad72
+          stepCounter: 2a732845-52de-4616-a7ae-9df805e82bb0
+        config: {}
+        dataType: NUMBER(38,0)
+        description: ""
+        name: ID
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: 0b809ad5-4221-4bc9-988d-26231e2c8e88
+                stepCounter: 35f0fb33-38ca-4588-a97c-cc8cc07afdce
+            transform: COALESCE("TODAYS_DATA"."ID", STG_DC_POC."ID")
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: 73eb3c95-a952-41d1-b56b-7db88224b8b3
+          stepCounter: 2a732845-52de-4616-a7ae-9df805e82bb0
+        config: {}
+        dataType: VARCHAR(16777216)
+        description: ""
+        name: new_name
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: 5c3bbdf3-e2ba-4055-a064-19b965445aa7
+                stepCounter: 35f0fb33-38ca-4588-a97c-cc8cc07afdce
+            transform: "\"TODAYS_DATA\".\"NAME\""
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: 73a60c76-471f-42de-91ba-034c07da75c8
+          stepCounter: 2a732845-52de-4616-a7ae-9df805e82bb0
+        config: {}
+        dataType: VARCHAR(16777216)
+        description: ""
+        name: old_name
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: 5c3bbdf3-e2ba-4055-a064-19b965445aa7
+                stepCounter: 35f0fb33-38ca-4588-a97c-cc8cc07afdce
+            transform: "\"STG_DC_POC\".\"NAME\""
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: 9dde3295-5403-480d-939a-7846e36f9ae9
+          stepCounter: 2a732845-52de-4616-a7ae-9df805e82bb0
+        config: {}
+        dataType: BOOLEAN
+        description: ""
+        name: ACTIVE
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: 256c1c4d-bfe3-4120-b3a6-6afb6becb5de
+                stepCounter: b3878787-63cb-4810-8f40-d5c7438dfab5
+            transform: ""
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: db731dc7-2bc2-48e9-b1cb-f53f315a4846
+          stepCounter: 2a732845-52de-4616-a7ae-9df805e82bb0
+        config: {}
+        dataType: TIMESTAMP_NTZ(9)
+        description: ""
+        name: CREATED_AT
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: fe2d6bcf-6f46-4b55-934c-0c92bcc43228
+                stepCounter: b3878787-63cb-4810-8f40-d5c7438dfab5
+            transform: CURRENT_TIMESTAMP()
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: 6a99dec9-c9b1-436d-b548-aa9189eb1c3f
+          stepCounter: 2a732845-52de-4616-a7ae-9df805e82bb0
+        config: {}
+        dataType: TIMESTAMP_NTZ(9)
+        description: ""
+        name: UPDATED_AT
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: f341ef3c-31ee-49b8-9cc5-5bdc4b2f6b99
+                stepCounter: b3878787-63cb-4810-8f40-d5c7438dfab5
+            transform: CURRENT_TIMESTAMP()
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: 71086cba-3d9b-45b1-b577-e77b19a049db
+          stepCounter: 2a732845-52de-4616-a7ae-9df805e82bb0
+        config: {}
+        dataType: STRING
+        defaultValue: ""
+        description: ""
+        keyColumnType: None
+        name: new_hash
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: "0"
+                stepCounter: "0"
+            transform: MD5(TO_JSON(OBJECT_CONSTRUCT('name', TODAYS_DATA."NAME")))
+        systemColumnType: None
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: 543ed031-dccd-4410-b51d-4455b43c41f5
+          stepCounter: 2a732845-52de-4616-a7ae-9df805e82bb0
+        config: {}
+        dataType: STRING
+        defaultValue: ""
+        description: ""
+        keyColumnType: None
+        name: old_hash
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: "0"
+                stepCounter: "0"
+            transform: MD5(TO_JSON(OBJECT_CONSTRUCT('name', STG_DC_POC."NAME")))
+        systemColumnType: None
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: e769ed07-ec1b-4eb3-bde4-95e2bf0f32ad
+          stepCounter: 2a732845-52de-4616-a7ae-9df805e82bb0
+        config: {}
+        dataType: STRING
+        defaultValue: ""
+        description: ""
+        keyColumnType: None
+        name: change_type
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: "0"
+                stepCounter: "0"
+            transform: CASE WHEN STG_DC_POC."ID" IS NULL THEN 'INSERT' WHEN TODAYS_DATA."ID" IS NULL THEN 'DELETE' WHEN MD5(TO_JSON(OBJECT_CONSTRUCT('name', TODAYS_DATA."NAME"))) != MD5(TO_JSON(OBJECT_CONSTRUCT('name', STG_DC_POC."NAME"))) THEN 'UPDATE' ELSE 'NO_CHANGE' END
+        systemColumnType: None
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: ea158b49-ad3f-415b-83b3-11b7d777a022
+          stepCounter: 2a732845-52de-4616-a7ae-9df805e82bb0
+        config: {}
+        dataType: STRING
+        defaultValue: ""
+        description: ""
+        keyColumnType: None
+        name: name
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: "0"
+                stepCounter: "0"
+            transform: "\"TODAYS_DATA\".\"NAME\""
+        systemColumnType: None
+    cteString: ""
+    enabledColumnTestIDs: []
+    sourceMapping:
+      - aliases:
+          STG_DC_POC: b3878787-63cb-4810-8f40-d5c7438dfab5
+          TODAYS_DATA: 35f0fb33-38ca-4588-a97c-cc8cc07afdce
+        customSQL:
+          customSQL: ""
+        dependencies:
+          - locationName: SRC
+            nodeName: STG_DC_POC
+          - locationName: SRC
+            nodeName: TODAYS_DATA
+        join:
+          joinCondition: |-
+            FROM {{ ref('SRC', 'TODAYS_DATA') }} "TODAYS_DATA"
+            INNER JOIN {{ ref('SRC', 'STG_DC_POC') }} "STG_DC_POC"
+            ON "TODAYS_DATA"."ID" = "STG_DC_POC"."ID" AND "STG_DC_POC"."ACTIVE" = TRUE
+        name: STG_CHANGES
+        noLinkRefs: []
+  name: STG_CHANGES
+  overrideSQL: false
+  schema: ""
+  sqlType: Stage
+  type: sql
+  version: 1
+type: Node

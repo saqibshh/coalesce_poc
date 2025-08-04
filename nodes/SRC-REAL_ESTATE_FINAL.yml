@@ -1,0 +1,320 @@
+fileVersion: 1
+id: 5ce3ac65-5fbf-449f-a3b7-3001b8490cb1
+name: REAL_ESTATE_FINAL
+operation:
+  database: ""
+  deployEnabled: true
+  description: ""
+  locationName: SRC
+  metadata:
+    columns:
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: 67332f0c-76d0-407c-908f-2c33b8d79ebd
+          stepCounter: 5ce3ac65-5fbf-449f-a3b7-3001b8490cb1
+        config: {}
+        dataType: NUMBER(38,0)
+        defaultValue: ""
+        description: ""
+        name: AREA
+        nullable: true
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: 9c2553df-b5bf-43f4-bc10-5e29caece1ee
+          stepCounter: 5ce3ac65-5fbf-449f-a3b7-3001b8490cb1
+        config: {}
+        dataType: VARCHAR(16777216)
+        defaultValue: ""
+        description: ""
+        name: LOCALITY
+        nullable: true
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: 9e1d71cd-c71b-4885-b0bc-79f8a845580f
+          stepCounter: 5ce3ac65-5fbf-449f-a3b7-3001b8490cb1
+        config: {}
+        dataType: VARCHAR(16777216)
+        defaultValue: ""
+        description: ""
+        name: PROPERTY_TYPE
+        nullable: true
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: 6ac2fed4-e444-4538-ade5-58d213f31219
+          stepCounter: 5ce3ac65-5fbf-449f-a3b7-3001b8490cb1
+        config: {}
+        dataType: VARCHAR(16777216)
+        defaultValue: ""
+        description: ""
+        name: BEDROOM_NUM
+        nullable: true
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: 9b8f238d-5a58-4fa1-8366-58bd91bb7fda
+          stepCounter: 5ce3ac65-5fbf-449f-a3b7-3001b8490cb1
+        config: {}
+        dataType: FLOAT
+        defaultValue: ""
+        description: ""
+        name: BATHROOM_NUM
+        nullable: true
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: 1d78e57f-093e-4581-b7a8-bad72d3170d4
+          stepCounter: 5ce3ac65-5fbf-449f-a3b7-3001b8490cb1
+        config: {}
+        dataType: FLOAT
+        defaultValue: ""
+        description: ""
+        name: BALCONY_NUM
+        nullable: true
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: 9af8ecfd-eaa6-4038-b4de-1779add1045c
+          stepCounter: 5ce3ac65-5fbf-449f-a3b7-3001b8490cb1
+        config: {}
+        dataType: VARCHAR(16777216)
+        defaultValue: ""
+        description: ""
+        name: FURNISHED
+        nullable: true
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: 7a58db80-839d-42ec-9dc2-e966e31ee635
+          stepCounter: 5ce3ac65-5fbf-449f-a3b7-3001b8490cb1
+        config: {}
+        dataType: VARCHAR(16777216)
+        defaultValue: ""
+        description: ""
+        name: PROPERTY_AGE
+        nullable: true
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: 9329e68f-61e8-4f45-b1d5-781392655fcf
+          stepCounter: 5ce3ac65-5fbf-449f-a3b7-3001b8490cb1
+        config: {}
+        dataType: FLOAT
+        defaultValue: ""
+        description: ""
+        name: LATITUDE
+        nullable: true
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: a7141197-ecf6-4c12-92c4-5969a0cdfeda
+          stepCounter: 5ce3ac65-5fbf-449f-a3b7-3001b8490cb1
+        config: {}
+        dataType: FLOAT
+        defaultValue: ""
+        description: ""
+        name: LONGITUDE
+        nullable: true
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: 5fcec10c-455c-47f3-b449-2b9c7d86ba91
+          stepCounter: 5ce3ac65-5fbf-449f-a3b7-3001b8490cb1
+        config: {}
+        dataType: VARCHAR(16777216)
+        defaultValue: ""
+        description: ""
+        name: DESCRIPTION
+        nullable: true
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: 65608d8f-7da9-4964-abe1-7c3e0bde89ff
+          stepCounter: 5ce3ac65-5fbf-449f-a3b7-3001b8490cb1
+        config: {}
+        dataType: FLOAT
+        defaultValue: ""
+        description: ""
+        name: PRICE_PER_SQFT_IN_THOUSANDS
+        nullable: true
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: e28800de-fd70-4047-9e9a-e1755ac250ad
+          stepCounter: 5ce3ac65-5fbf-449f-a3b7-3001b8490cb1
+        config: {}
+        dataType: FLOAT
+        defaultValue: ""
+        description: ""
+        name: PRICE
+        nullable: true
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: ff5d82d8-5d9a-4a87-9197-895b765f490e
+          stepCounter: 5ce3ac65-5fbf-449f-a3b7-3001b8490cb1
+        config: {}
+        dataType: NUMBER(38,0)
+        defaultValue: ""
+        description: ""
+        name: PINCODE
+        nullable: true
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: ff422937-e448-4004-ad6f-68ac3b6ff900
+          stepCounter: 5ce3ac65-5fbf-449f-a3b7-3001b8490cb1
+        config: {}
+        dataType: VARCHAR(16777216)
+        defaultValue: ""
+        description: ""
+        name: REGION
+        nullable: true
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: fab74d4d-0e0f-41dc-a7eb-14b2b7a7c1bc
+          stepCounter: 5ce3ac65-5fbf-449f-a3b7-3001b8490cb1
+        config: {}
+        dataType: NUMBER(38,0)
+        defaultValue: ""
+        description: ""
+        name: UNIQUE_KEY
+        nullable: true
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+  name: REAL_ESTATE_FINAL
+  schema: ""
+  sqlType: Source
+  type: sourceInput
+  version: 1
+type: Node
