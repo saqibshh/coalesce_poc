@@ -122,7 +122,7 @@ operation:
   name: scd_merge
   overrideSQL: false
   schema: ""
-  sqlType: Dimension
+  sqlType: Fact
   type: sql
   version: 1
 type: Node
