@@ -3,13 +3,9 @@ id: f47b2a3c-8d15-4f9e-b234-a1b2c3d4e5f6
 name: scd_merge
 operation:
   config:
-    insertStrategy: INSERT
     postSQL: ""
     preSQL: ""
     testsEnabled: true
-    truncateBefore: false
-    businessKeyColumns:
-      - id
   database: ""
   deployEnabled: true
   description: "Implements SCD2 logic with active flag tracking"
@@ -18,7 +14,71 @@ operation:
   materializationType: table
   metadata:
     appliedNodeTests: []
-    columns: []
+    columns:
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: a1b2c3d4-e5f6-7890-1234-567890abcdef
+          stepCounter: f47b2a3c-8d15-4f9e-b234-a1b2c3d4e5f6
+        config: {}
+        dataType: NUMBER(38,0)
+        description: ""
+        name: ID
+        nullable: false
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: be99951c-1851-4d54-9085-1e64ebad7f66
+                stepCounter: 35f0fb33-38ca-4588-a97c-cc8cc07afdce
+            transform: ""
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: b2c3d4e5-f678-9012-3456-789012345678
+          stepCounter: f47b2a3c-8d15-4f9e-b234-a1b2c3d4e5f6
+        config: {}
+        dataType: VARCHAR(16777216)
+        description: ""
+        name: NAME
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: 3a4af282-f0ae-4e64-83bf-48d3884b3b6d
+                stepCounter: 35f0fb33-38ca-4588-a97c-cc8cc07afdce
+            transform: ""
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: c3d4e5f6-7890-1234-5678-901234567890
+          stepCounter: f47b2a3c-8d15-4f9e-b234-a1b2c3d4e5f6
+        config: {}
+        dataType: BOOLEAN
+        description: ""
+        name: ACTIVE
+        nullable: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: "TRUE"
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: d4e5f678-9012-3456-7890-123456789012
+          stepCounter: f47b2a3c-8d15-4f9e-b234-a1b2c3d4e5f6
+        config: {}
+        dataType: TIMESTAMP_NTZ(9)
+        description: ""
+        name: CREATED_AT
+        nullable: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: "CURRENT_TIMESTAMP()"
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: e5f67890-1234-5678-9012-345678901234
+          stepCounter: f47b2a3c-8d15-4f9e-b234-a1b2c3d4e5f6
+        config: {}
+        dataType: TIMESTAMP_NTZ(9)
+        description: ""
+        name: UPDATED_AT
+        nullable: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: "CURRENT_TIMESTAMP()"
     cteString: ""
     enabledColumnTestIDs: []
     sourceMapping:
@@ -34,40 +94,15 @@ operation:
             nodeName: DC_POC
         join:
           joinCondition: |-
-            WITH changes AS (
-              SELECT
-                COALESCE(new.id, old.id) AS id,
-                new.name AS new_name,
-                old.name AS old_name,
-                CASE 
-                  WHEN old.id IS NULL THEN 'INSERT'
-                  WHEN new.id IS NULL THEN 'DELETE'
-                  WHEN MD5(TO_JSON(OBJECT_CONSTRUCT('name', new.name))) 
-                     != MD5(TO_JSON(OBJECT_CONSTRUCT('name', old.name))) THEN 'UPDATE'
-                  ELSE 'NO_CHANGE'
-                END AS change_type,
-                new.name,
-                CURRENT_TIMESTAMP() AS created_at,
-                CURRENT_TIMESTAMP() AS updated_at
-              FROM {{ ref('SRC', 'TODAYS_DATA') }} AS new
-              FULL OUTER JOIN {{ ref('SRC', 'DC_POC') }} AS old
-                ON new.id = old.id
-               AND old.active = TRUE
-            )
-            SELECT
-              id,
-              name,
-              TRUE AS active,
-              created_at,
-              updated_at
-            FROM changes
-            WHERE change_type IN ('INSERT', 'UPDATE')
+            FROM {{ ref('SRC', 'TODAYS_DATA') }} "TODAYS_DATA"
+            JOIN {{ ref('SRC', 'DC_POC') }} "DC_POC"
+              ON TODAYS_DATA.id = DC_POC.id
         name: scd_merge
         noLinkRefs: []
   name: scd_merge
   overrideSQL: false
   schema: ""
-  sqlType: "Dimension"
+  sqlType: Fact
   type: sql
   version: 1
 type: Node
