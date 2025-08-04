@@ -38,40 +38,55 @@ operation:
         nullable: false
         description: ""
         config: {}
+        columnReference:
+          columnCounter: id-col
+          stepCounter: f47b2a3c-8d15-4f9e-b234-a1b2c3d4e5f6
         sourceColumnReferences:
-          - transform: id
+          - transform: "id"
             columnReferences: []
       - name: NAME
         dataType: VARCHAR(16777216)
         nullable: true
         description: ""
         config: {}
+        columnReference:
+          columnCounter: name-col
+          stepCounter: f47b2a3c-8d15-4f9e-b234-a1b2c3d4e5f6
         sourceColumnReferences:
-          - transform: name
+          - transform: "name"
             columnReferences: []
       - name: ACTIVE
         dataType: BOOLEAN
         nullable: false
         description: ""
         config: {}
+        columnReference:
+          columnCounter: active-col
+          stepCounter: f47b2a3c-8d15-4f9e-b234-a1b2c3d4e5f6
         sourceColumnReferences:
-          - transform: TRUE
+          - transform: "TRUE"
             columnReferences: []
       - name: CREATED_AT
         dataType: TIMESTAMP_NTZ(9)
         nullable: false
         description: ""
         config: {}
+        columnReference:
+          columnCounter: created-col
+          stepCounter: f47b2a3c-8d15-4f9e-b234-a1b2c3d4e5f6
         sourceColumnReferences:
-          - transform: CURRENT_TIMESTAMP()
+          - transform: "CURRENT_TIMESTAMP()"
             columnReferences: []
       - name: UPDATED_AT
         dataType: TIMESTAMP_NTZ(9)
         nullable: false
         description: ""
         config: {}
+        columnReference:
+          columnCounter: updated-col
+          stepCounter: f47b2a3c-8d15-4f9e-b234-a1b2c3d4e5f6
         sourceColumnReferences:
-          - transform: CURRENT_TIMESTAMP()
+          - transform: "CURRENT_TIMESTAMP()"
             columnReferences: []
     cteString: ""
     enabledColumnTestIDs: []
