@@ -101,7 +101,7 @@ operation:
                 CURRENT_TIMESTAMP() AS created_at,
                 CURRENT_TIMESTAMP() AS updated_at
               FROM {{ ref('SRC', 'TODAYS_DATA') }} AS new
-              FULL OUTER JOIN {{ ref('DW', 'SCD_TARGET') }} AS old
+              FULL OUTER JOIN {{ ref('SRC', 'STG_DC_POC') }} AS old
                 ON new.id = old.id
                AND old.active = TRUE
             )
