@@ -32,7 +32,47 @@ operation:
   materializationType: table
   metadata:
     appliedNodeTests: []
-    columns: []
+    columns:
+      - name: ID
+        dataType: NUMBER(38,0)
+        nullable: false
+        description: ""
+        config: {}
+        sourceColumnReferences:
+          - transform: id
+            columnReferences: []
+      - name: NAME
+        dataType: VARCHAR(16777216)
+        nullable: true
+        description: ""
+        config: {}
+        sourceColumnReferences:
+          - transform: name
+            columnReferences: []
+      - name: ACTIVE
+        dataType: BOOLEAN
+        nullable: false
+        description: ""
+        config: {}
+        sourceColumnReferences:
+          - transform: TRUE
+            columnReferences: []
+      - name: CREATED_AT
+        dataType: TIMESTAMP_NTZ(9)
+        nullable: false
+        description: ""
+        config: {}
+        sourceColumnReferences:
+          - transform: CURRENT_TIMESTAMP()
+            columnReferences: []
+      - name: UPDATED_AT
+        dataType: TIMESTAMP_NTZ(9)
+        nullable: false
+        description: ""
+        config: {}
+        sourceColumnReferences:
+          - transform: CURRENT_TIMESTAMP()
+            columnReferences: []
     cteString: ""
     enabledColumnTestIDs: []
     sourceMapping:
