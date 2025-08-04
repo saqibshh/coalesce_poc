@@ -8,20 +8,6 @@ operation:
     preSQL: ""
     testsEnabled: true
     truncateBefore: false
-    mergeConfig:
-      keys:
-        - id
-      insertFilter: change_type IN ('INSERT', 'UPDATE')
-      updateFilter: change_type = 'UPDATE'
-      columnsToUpdate:
-        active: FALSE
-        updated_at: CURRENT_TIMESTAMP()
-      insertColumns:
-        - id
-        - name
-        - active
-        - created_at
-        - updated_at
   database: ""
   deployEnabled: true
   description: "Implements SCD2 logic with active flag tracking"
@@ -96,7 +82,7 @@ operation:
     sourceMapping:
       - aliases:
           TODAYS_DATA: 35f0fb33-38ca-4588-a97c-cc8cc07afdce
-          SCD_TARGET: 12345678-1234-1234-1234-123456789012
+          DC_POC: deea11d0-4899-4c07-9159-43741775c4cd
         customSQL:
           customSQL: |
             WITH changes AS (
