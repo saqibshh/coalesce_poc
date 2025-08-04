@@ -16,10 +16,10 @@ operation:
         - active
         - created_at
         - updated_at
-      insertFilter: change_type IN ('INSERT', 'UPDATE')
+      insertFilter: ""
       keys:
         - id
-      updateFilter: change_type = 'UPDATE'
+      updateFilter: ""
     postSQL: ""
     preSQL: ""
     testsEnabled: true
@@ -45,7 +45,7 @@ operation:
         nullable: false
         sourceColumnReferences:
           - columnReferences: []
-            transform: COALESCE("TODAYS_DATA".id, "DC_POC".id)
+            transform: "TODAYS_DATA".id
       - appliedColumnTests: {}
         columnReference:
           columnCounter: name-col
@@ -58,7 +58,7 @@ operation:
         nullable: true
         sourceColumnReferences:
           - columnReferences: []
-            transform: COALESCE("TODAYS_DATA".name, "DC_POC".name)
+            transform: "TODAYS_DATA".name
       - appliedColumnTests: {}
         columnReference:
           columnCounter: active-col
@@ -114,7 +114,7 @@ operation:
         join:
           joinCondition: |-
             FROM {{ ref('SRC', 'TODAYS_DATA') }} "TODAYS_DATA"
-            FULL OUTER JOIN {{ ref('SRC', 'DC_POC') }} "DC_POC"
+            LEFT JOIN {{ ref('SRC', 'DC_POC') }} "DC_POC"
               ON TODAYS_DATA.id = DC_POC.id
              AND DC_POC.active = TRUE
         name: scd_merge
