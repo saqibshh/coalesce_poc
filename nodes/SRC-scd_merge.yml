@@ -40,6 +40,7 @@ operation:
         config: {}
         dataType: NUMBER(38,0)
         description: ""
+        isBusinessKey: true
         name: ID
         nullable: false
         sourceColumnReferences:
@@ -52,6 +53,7 @@ operation:
         config: {}
         dataType: VARCHAR(16777216)
         description: ""
+        isChangeTracking: true
         name: NAME
         nullable: true
         sourceColumnReferences:
@@ -64,6 +66,7 @@ operation:
         config: {}
         dataType: BOOLEAN
         description: ""
+        isChangeTracking: true
         name: ACTIVE
         nullable: false
         sourceColumnReferences:
@@ -76,6 +79,7 @@ operation:
         config: {}
         dataType: TIMESTAMP_NTZ(9)
         description: ""
+        isChangeTracking: true
         name: CREATED_AT
         nullable: false
         sourceColumnReferences:
@@ -88,6 +92,7 @@ operation:
         config: {}
         dataType: TIMESTAMP_NTZ(9)
         description: ""
+        isChangeTracking: true
         name: UPDATED_AT
         nullable: false
         sourceColumnReferences:
