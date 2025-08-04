@@ -22,8 +22,18 @@ operation:
     cteString: ""
     enabledColumnTestIDs: []
     sourceMapping:
-      - customSQL:
-          customSQL: |
+      - aliases:
+          TODAYS_DATA: 35f0fb33-38ca-4588-a97c-cc8cc07afdce
+          DC_POC: deea11d0-4899-4c07-9159-43741775c4cd
+        customSQL:
+          customSQL: ""
+        dependencies:
+          - locationName: SRC
+            nodeName: TODAYS_DATA
+          - locationName: SRC
+            nodeName: DC_POC
+        join:
+          joinCondition: |-
             WITH changes AS (
               SELECT
                 COALESCE(new.id, old.id) AS id,
@@ -52,17 +62,10 @@ operation:
               updated_at
             FROM changes
             WHERE change_type IN ('INSERT', 'UPDATE')
-        dependencies:
-          - locationName: SRC
-            nodeName: TODAYS_DATA
-          - locationName: SRC
-            nodeName: DC_POC
-        join:
-          joinCondition: ""
         name: scd_merge
         noLinkRefs: []
   name: scd_merge
-  overrideSQL: true
+  overrideSQL: false
   schema: ""
   sqlType: "Dimension"
   type: sql
