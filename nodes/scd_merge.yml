@@ -1,0 +1,114 @@
+fileVersion: 1
+id: f47b2a3c-8d15-4f9e-b234-a1b2c3d4e5f6
+name: scd_merge
+operation:
+  config:
+    insertStrategy: MERGE
+    postSQL: ""
+    preSQL: ""
+    testsEnabled: true
+    truncateBefore: false
+    businessKeyColumns:
+      - id
+    mergeConfig:
+      keys:
+        - id
+      insertFilter: change_type IN ('INSERT', 'UPDATE')
+      updateFilter: change_type = 'UPDATE'
+      columnsToUpdate:
+        active: FALSE
+        updated_at: CURRENT_TIMESTAMP()
+      insertColumns:
+        - id
+        - name
+        - active
+        - created_at
+        - updated_at
+  database: ""
+  deployEnabled: true
+  description: "Implements SCD2 logic with active flag tracking"
+  isMultisource: false
+  locationName: SRC
+  materializationType: table
+  metadata:
+    appliedNodeTests: []
+    columns:
+      - name: ID
+        dataType: NUMBER(38,0)
+        nullable: false
+        description: ""
+        config: {}
+        columnReference:
+          columnCounter: id-col
+          stepCounter: f47b2a3c-8d15-4f9e-b234-a1b2c3d4e5f6
+        sourceColumnReferences:
+          - transform: "id"
+            columnReferences: []
+      - name: NAME
+        dataType: VARCHAR(16777216)
+        nullable: true
+        description: ""
+        config: {}
+        columnReference:
+          columnCounter: name-col
+          stepCounter: f47b2a3c-8d15-4f9e-b234-a1b2c3d4e5f6
+        sourceColumnReferences:
+          - transform: "name"
+            columnReferences: []
+      - name: ACTIVE
+        dataType: BOOLEAN
+        nullable: false
+        description: ""
+        config: {}
+        columnReference:
+          columnCounter: active-col
+          stepCounter: f47b2a3c-8d15-4f9e-b234-a1b2c3d4e5f6
+        sourceColumnReferences:
+          - transform: "TRUE"
+            columnReferences: []
+      - name: CREATED_AT
+        dataType: TIMESTAMP_NTZ(9)
+        nullable: false
+        description: ""
+        config: {}
+        columnReference:
+          columnCounter: created-col
+          stepCounter: f47b2a3c-8d15-4f9e-b234-a1b2c3d4e5f6
+        sourceColumnReferences:
+          - transform: "CURRENT_TIMESTAMP()"
+            columnReferences: []
+      - name: UPDATED_AT
+        dataType: TIMESTAMP_NTZ(9)
+        nullable: false
+        description: ""
+        config: {}
+        columnReference:
+          columnCounter: updated-col
+          stepCounter: f47b2a3c-8d15-4f9e-b234-a1b2c3d4e5f6
+        sourceColumnReferences:
+          - transform: "CURRENT_TIMESTAMP()"
+            columnReferences: []
+    cteString: ""
+    enabledColumnTestIDs: []
+    sourceMapping:
+      - aliases:
+          TODAYS_DATA: 35f0fb33-38ca-4588-a97c-cc8cc07afdce
+          DC_POC: deea11d0-4899-4c07-9159-43741775c4cd
+        customSQL:
+          customSQL: ""
+        dependencies:
+          - locationName: SRC
+            nodeName: TODAYS_DATA
+          - locationName: SRC
+            nodeName: DC_POC
+        join:
+          joinCondition: "TODAYS_DATA.id = DC_POC.id"
+        name: scd_merge
+        noLinkRefs: []
+  name: scd_merge
+  overrideSQL: false
+  schema: ""
+  sqlType: "Dimension"
+  type: sql
+  version: 1
+type: Node
