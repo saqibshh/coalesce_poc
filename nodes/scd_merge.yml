@@ -12,7 +12,7 @@ operation:
   deployEnabled: true
   description: "Implements SCD2 logic with active flag tracking"
   isMultisource: false
-  locationName: DW
+  locationName: SRC
   materializationType: table
   metadata:
     appliedNodeTests: []
@@ -101,7 +101,7 @@ operation:
                 CURRENT_TIMESTAMP() AS created_at,
                 CURRENT_TIMESTAMP() AS updated_at
               FROM {{ ref('SRC', 'TODAYS_DATA') }} AS new
-              FULL OUTER JOIN {{ ref('SRC', 'STG_DC_POC') }} AS old
+              FULL OUTER JOIN {{ ref('SRC', 'DC_POC') }} AS old
                 ON new.id = old.id
                AND old.active = TRUE
             )
@@ -116,8 +116,8 @@ operation:
         dependencies:
           - locationName: SRC
             nodeName: TODAYS_DATA
-          - locationName: DW
-            nodeName: SCD_TARGET
+          - locationName: SRC
+            nodeName: DC_POC
         join:
           joinCondition: ""
         name: scd_merge
