@@ -45,7 +45,7 @@ operation:
         nullable: false
         sourceColumnReferences:
           - columnReferences: []
-            transform: changes.id
+            transform: id
       - appliedColumnTests: {}
         columnReference:
           columnCounter: name-col
@@ -58,7 +58,7 @@ operation:
         nullable: true
         sourceColumnReferences:
           - columnReferences: []
-            transform: changes.name
+            transform: name
       - appliedColumnTests: {}
         columnReference:
           columnCounter: active-col
@@ -84,7 +84,7 @@ operation:
         nullable: false
         sourceColumnReferences:
           - columnReferences: []
-            transform: changes.created_at
+            transform: CURRENT_TIMESTAMP()
       - appliedColumnTests: {}
         columnReference:
           columnCounter: updated-col
@@ -97,28 +97,8 @@ operation:
         nullable: false
         sourceColumnReferences:
           - columnReferences: []
-            transform: changes.updated_at
-    cteString: |-
-      changes AS (
-        SELECT
-          COALESCE(TODAYS_DATA.id, DC_POC.id) AS id,
-          TODAYS_DATA.name AS new_name,
-          DC_POC.name AS old_name,
-          CASE 
-            WHEN DC_POC.id IS NULL THEN 'INSERT'
-            WHEN TODAYS_DATA.id IS NULL THEN 'DELETE'
-            WHEN MD5(TO_JSON(OBJECT_CONSTRUCT('name', TODAYS_DATA.name))) 
-               != MD5(TO_JSON(OBJECT_CONSTRUCT('name', DC_POC.name))) THEN 'UPDATE'
-            ELSE 'NO_CHANGE'
-          END AS change_type,
-          TODAYS_DATA.name,
-          CURRENT_TIMESTAMP() AS created_at,
-          CURRENT_TIMESTAMP() AS updated_at
-        FROM {{ ref('SRC', 'TODAYS_DATA') }} TODAYS_DATA
-        FULL OUTER JOIN {{ ref('SRC', 'DC_POC') }} DC_POC
-          ON TODAYS_DATA.id = DC_POC.id
-         AND DC_POC.active = TRUE
-      )
+            transform: CURRENT_TIMESTAMP()
+    cteString: ""
     enabledColumnTestIDs: []
     sourceMapping:
       - aliases:
@@ -132,11 +112,7 @@ operation:
           - locationName: SRC
             nodeName: DC_POC
         join:
-          joinCondition: |-
-            FROM {{ ref('SRC', 'TODAYS_DATA') }} "TODAYS_DATA"
-            FULL OUTER JOIN {{ ref('SRC', 'DC_POC') }} "DC_POC"
-              ON TODAYS_DATA.id = DC_POC.id
-             AND DC_POC.active = TRUE
+          joinCondition: TODAYS_DATA.id = DC_POC.id
         name: scd_merge
         noLinkRefs: []
   name: scd_merge
