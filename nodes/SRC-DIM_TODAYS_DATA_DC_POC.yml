@@ -10,7 +10,7 @@ operation:
         t.id,
         t.name,
         TRUE as active,
-        t.created_at as created_at,
+        CURRENT_TIMESTAMP() as created_at,
         CURRENT_TIMESTAMP() as updated_at
       FROM {{ ref('SRC', 'V_TODAYS_DATA') }} t
       LEFT JOIN {{ ref('SRC', 'DC_POC') }} d 
