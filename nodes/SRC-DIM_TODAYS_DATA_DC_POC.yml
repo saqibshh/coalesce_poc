@@ -32,10 +32,10 @@ operation:
           )
           OR
           -- Records not present in today's data
-          id NOT IN (
-            SELECT DISTINCT id 
-            FROM {{ ref('SRC', 'V_TODAYS_DATA') }}
-            WHERE id IS NOT NULL
+          NOT EXISTS (
+            SELECT 1 FROM {{ ref('SRC', 'V_TODAYS_DATA') }} t
+            WHERE t.id = {{ ref('SRC', 'DC_POC') }}.id
+            AND t.id IS NOT NULL
           )
         );
     testsEnabled: true
