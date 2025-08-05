@@ -19,7 +19,7 @@ operation:
     testsEnabled: true
   database: ""
   deployEnabled: true
-  description: ""
+  description: "SCD Type 2 dimension combining TODAYS_DATA and DC_POC views with proper change tracking"
   isMultisource: false
   locationName: SRC
   materializationType: table
@@ -117,9 +117,10 @@ operation:
         join:
           joinCondition: |-
             FROM {{ ref('SRC', 'V_TODAYS_DATA') }} "V_TODAYS_DATA"
-            INNER JOIN {{ ref('SRC', 'V_DC_POC') }} "V_DC_POC"
-            ON "TODAYS_DATA".id = "DC_POC".id AND "DC_POC".active = TRUE
-            WHERE "DC_POC".id IS NULL OR ("TODAYS_DATA".name != "DC_POC".name OR "TODAYS_DATA".name IS NULL != "DC_POC".name IS NULL)
+            LEFT JOIN {{ ref('SRC', 'V_DC_POC') }} "V_DC_POC"
+              ON "V_TODAYS_DATA".id = "V_DC_POC".id AND "V_DC_POC".active = TRUE
+            WHERE "V_DC_POC".id IS NULL  -- New records
+               OR ("V_TODAYS_DATA".name != "V_DC_POC".name OR "V_TODAYS_DATA".name IS NULL != "V_DC_POC".name IS NULL)  -- Changed records
         name: DIM_TODAYS_DATA_DC_POC
         noLinkRefs: []
   name: DIM_TODAYS_DATA_DC_POC
