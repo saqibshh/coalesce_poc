@@ -1,0 +1,110 @@
+fileVersion: 1
+id: 1ed7700b-fa23-47ff-aad0-2ecf93f42fca
+name: STG_DC_POC
+operation:
+  config:
+    insertStrategy: INSERT
+    postSQL: ""
+    preSQL: ""
+    selectDistinct: true
+    testsEnabled: true
+    truncateBefore: true
+  database: ""
+  deployEnabled: true
+  description: Implements SCD2 logic with active flag tracking
+  isMultisource: false
+  locationName: SRC
+  materializationType: view
+  metadata:
+    appliedNodeTests: []
+    columns:
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: deb00917-fbb0-40b1-a985-97907f918509
+          stepCounter: 1ed7700b-fa23-47ff-aad0-2ecf93f42fca
+        config: {}
+        dataType: NUMBER(38,0)
+        description: ""
+        name: ID
+        nullable: false
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: 9834bdd6-b4ef-42e1-920d-33eb9d5ca6cb
+                stepCounter: 6af24ec4-99e1-49b6-8921-12e4831411a7
+            transform: ""
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: 6663df42-38b5-4b71-82ef-6458827c97c1
+          stepCounter: 1ed7700b-fa23-47ff-aad0-2ecf93f42fca
+        config: {}
+        dataType: VARCHAR(16777216)
+        description: ""
+        name: NAME
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: a22c858d-fe0c-4a3f-9281-3910ef7821d4
+                stepCounter: 6af24ec4-99e1-49b6-8921-12e4831411a7
+            transform: ""
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: 2942916a-0ad1-4229-8a5f-bd74c838b665
+          stepCounter: 1ed7700b-fa23-47ff-aad0-2ecf93f42fca
+        config: {}
+        dataType: BOOLEAN
+        description: ""
+        name: ACTIVE
+        nullable: false
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: b859458a-8681-418e-8697-c0891fb7fa63
+                stepCounter: 6af24ec4-99e1-49b6-8921-12e4831411a7
+            transform: ""
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: 843f37ed-31df-4785-b560-7f3796b3436d
+          stepCounter: 1ed7700b-fa23-47ff-aad0-2ecf93f42fca
+        config: {}
+        dataType: TIMESTAMP_NTZ(9)
+        description: ""
+        name: CREATED_AT
+        nullable: false
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: a1006920-2102-4739-b421-9964cf3b33aa
+                stepCounter: 6af24ec4-99e1-49b6-8921-12e4831411a7
+            transform: ""
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: 5148527b-4c17-4a93-96b5-548da18df614
+          stepCounter: 1ed7700b-fa23-47ff-aad0-2ecf93f42fca
+        config: {}
+        dataType: TIMESTAMP_NTZ(9)
+        description: ""
+        name: UPDATED_AT
+        nullable: false
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: ad541cc6-e329-48cf-b6d6-fa679cee7117
+                stepCounter: 6af24ec4-99e1-49b6-8921-12e4831411a7
+            transform: ""
+    cteString: ""
+    enabledColumnTestIDs: []
+    sourceMapping:
+      - aliases: {}
+        customSQL:
+          customSQL: ""
+        dependencies:
+          - locationName: SRC
+            nodeName: DC_POC
+        join:
+          joinCondition: FROM {{ ref('SRC', 'DC_POC') }} "DC_POC"
+        name: STG_DC_POC
+        noLinkRefs: []
+  name: STG_DC_POC
+  overrideSQL: false
+  schema: ""
+  sqlType: View
+  type: sql
+  version: 1
+type: Node

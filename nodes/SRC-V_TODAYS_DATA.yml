@@ -1,25 +1,37 @@
 fileVersion: 1
-id: 35f0fb33-38ca-4588-a97c-cc8cc07afdce
-name: TODAYS_DATA
+id: b9d1ebac-2cda-47f1-9810-bda9592ad0c6
+name: V_TODAYS_DATA
 operation:
   config:
-    postSQL: ""
-    preSQL: ""
-    testsEnabled: true
+    insertStrategy: UNION
+    selectDistinct: false
   database: ""
   deployEnabled: true
   description: ""
   isMultisource: false
   locationName: SRC
-  truncateBefore: true
   materializationType: view
   metadata:
     appliedNodeTests: []
     columns:
       - appliedColumnTests: {}
         columnReference:
-          columnCounter: 0b809ad5-4221-4bc9-988d-26231e2c8e88
-          stepCounter: 35f0fb33-38ca-4588-a97c-cc8cc07afdce
+          columnCounter: a7553219-4bbc-4808-bcb5-4b2b7d07dbff
+          stepCounter: b9d1ebac-2cda-47f1-9810-bda9592ad0c6
+        config: {}
+        dataType: VARIANT
+        description: The value of this row
+        name: VALUE
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: e5017ee4-d2a7-46a4-8a0c-018f1117bf4d
+                stepCounter: 0dc5b497-f032-4303-86aa-d31dafa0e2a1
+            transform: ""
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: 469f4596-8d2b-419c-bf0f-f52dfbea41b5
+          stepCounter: b9d1ebac-2cda-47f1-9810-bda9592ad0c6
         config: {}
         dataType: NUMBER(38,0)
         description: ""
@@ -32,8 +44,8 @@ operation:
             transform: ""
       - appliedColumnTests: {}
         columnReference:
-          columnCounter: 5c3bbdf3-e2ba-4055-a064-19b965445aa7
-          stepCounter: 35f0fb33-38ca-4588-a97c-cc8cc07afdce
+          columnCounter: 324777f7-b64f-4b64-adb1-b2f292108cfa
+          stepCounter: b9d1ebac-2cda-47f1-9810-bda9592ad0c6
         config: {}
         dataType: VARCHAR(16777216)
         description: ""
@@ -46,8 +58,8 @@ operation:
             transform: ""
       - appliedColumnTests: {}
         columnReference:
-          columnCounter: 071c7e58-f957-4959-abed-eb5fe4f7378c
-          stepCounter: 35f0fb33-38ca-4588-a97c-cc8cc07afdce
+          columnCounter: 903234ee-93fa-4893-80a4-c5a442cc15b3
+          stepCounter: b9d1ebac-2cda-47f1-9810-bda9592ad0c6
         config: {}
         dataType: VARCHAR(16777216)
         description: ""
@@ -60,8 +72,8 @@ operation:
             transform: ""
       - appliedColumnTests: {}
         columnReference:
-          columnCounter: 48fba612-a978-4edd-844c-74b8fce0fd4e
-          stepCounter: 35f0fb33-38ca-4588-a97c-cc8cc07afdce
+          columnCounter: ce95177e-54f7-4ee9-8ef4-1bf35b265e20
+          stepCounter: b9d1ebac-2cda-47f1-9810-bda9592ad0c6
         config: {}
         dataType: VARCHAR(16777216)
         description: ""
@@ -74,8 +86,8 @@ operation:
             transform: ""
       - appliedColumnTests: {}
         columnReference:
-          columnCounter: 3f3f2532-0173-44a9-a436-be179786a5a0
-          stepCounter: 35f0fb33-38ca-4588-a97c-cc8cc07afdce
+          columnCounter: 6ac97653-4116-43c4-9b1a-f07ebd07abe8
+          stepCounter: b9d1ebac-2cda-47f1-9810-bda9592ad0c6
         config: {}
         dataType: VARCHAR(16777216)
         description: ""
@@ -84,6 +96,20 @@ operation:
         sourceColumnReferences:
           - columnReferences:
               - columnCounter: 6e31075f-a169-49b4-9a9f-4b5cb70b843c
+                stepCounter: 0dc5b497-f032-4303-86aa-d31dafa0e2a1
+            transform: ""
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: 81a1ce8f-7335-410e-b3c8-b5ed1e66b28a
+          stepCounter: b9d1ebac-2cda-47f1-9810-bda9592ad0c6
+        config: {}
+        dataType: VARCHAR(16777216)
+        description: ""
+        name: FILE_PATH
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: c5d4d669-a9cc-4104-b077-f19b46669835
                 stepCounter: 0dc5b497-f032-4303-86aa-d31dafa0e2a1
             transform: ""
     cteString: ""
@@ -100,12 +126,12 @@ operation:
           joinCondition: |-
             FROM {{ ref('SRC', 'EXT_DC_POC_TABLE1') }} "EXT_DC_POC_TABLE1"
             WHERE TO_DATE(year || '-' || month || '-' || day, 'YYYY-MM-DD') = '2025-08-06'
-        name: TODAYS_DATA
+        name: V_TODAYS_DATA
         noLinkRefs: []
-  name: TODAYS_DATA
+  name: V_TODAYS_DATA
   overrideSQL: false
   schema: ""
-  sqlType: Fact
+  sqlType: View
   type: sql
   version: 1
 type: Node
