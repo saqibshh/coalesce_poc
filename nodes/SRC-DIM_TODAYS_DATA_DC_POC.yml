@@ -4,8 +4,7 @@ name: DIM_TODAYS_DATA_DC_POC
 operation:
   config:
     postSQL: |-
-      -- Step 2: Insert new and changed records directly into DC_POC table
-      -- This handles both initial load (empty table) and ongoing SCD Type 2 updates
+      -- SCD Type 2: Insert new and changed records into DC_POC
       INSERT INTO {{ ref('SRC', 'DC_POC') }} (id, name, active, created_at, updated_at)
       SELECT 
         t.id,
@@ -16,7 +15,8 @@ operation:
       FROM {{ ref('SRC', 'V_TODAYS_DATA') }} t
       LEFT JOIN {{ ref('SRC', 'DC_POC') }} d 
         ON t.id = d.id AND d.active = TRUE
-      WHERE d.id IS NULL;  -- New records (includes initial load when table is empty)
+      WHERE d.id IS NULL  -- New records (empty table → all records inserted)
+         OR (t.name != d.name OR t.name IS NULL != d.name IS NULL);  -- Changed records
     preSQL: |-
       -- Step 1: Mark existing records as inactive (only if table has data)
       UPDATE {{ ref('SRC', 'DC_POC') }} 
@@ -114,13 +114,14 @@ operation:
           V_TODAYS_DATA: b9d1ebac-2cda-47f1-9810-bda9592ad0c6
         customSQL:
           customSQL: |-
-            -- Staging view for data preview - actual inserts happen in postSQL
+            -- Debug: Show what data is available from V_TODAYS_DATA
             SELECT 
               id,
               name,
               TRUE as active,
               CURRENT_TIMESTAMP() as created_at,
-              CURRENT_TIMESTAMP() as updated_at
+              CURRENT_TIMESTAMP() as updated_at,
+              'DEBUG: Records from V_TODAYS_DATA' as debug_info
             FROM {{ ref('SRC', 'V_TODAYS_DATA') }}
         dependencies:
           - locationName: SRC
