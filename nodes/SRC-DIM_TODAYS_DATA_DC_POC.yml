@@ -34,6 +34,7 @@ operation:
         dataType: NUMBER(38,0)
         description: ""
         isBusinessKey: true
+        isSurrogateKey: true
         name: ID
         nullable: true
         sourceColumnReferences:
@@ -64,6 +65,7 @@ operation:
         dataType: BOOLEAN
         description: ""
         isChangeTracking: true
+        isSystemCurrentFlag: true
         name: ACTIVE
         nullable: false
         sourceColumnReferences:
@@ -77,6 +79,7 @@ operation:
         dataType: TIMESTAMP_NTZ(9)
         description: ""
         isChangeTracking: true
+        isSystemStartDate: true
         name: CREATED_AT
         nullable: false
         sourceColumnReferences:
@@ -90,6 +93,7 @@ operation:
         dataType: TIMESTAMP_NTZ(9)
         description: ""
         isChangeTracking: true
+        isSystemUpdateDate: true
         name: UPDATED_AT
         nullable: false
         sourceColumnReferences:
