@@ -1,6 +1,6 @@
 fileVersion: 1
 id: f47b2a3c-8d15-4f9e-b234-a1b2c3d4e5f6
-name: scd_merge
+name: DC_POC
 operation:
   config:
     businessKeyColumns:
@@ -113,9 +113,9 @@ operation:
         join:
           joinCondition: |-
             FROM {{ ref('SRC', 'TODAYS_DATA') }} "TODAYS_DATA"
-        name: scd_merge
+        name: DC_POC
         noLinkRefs: []
-  name: scd_merge
+  name: DC_POC
   overrideSQL: false
   schema: ""
   sqlType: Fact
