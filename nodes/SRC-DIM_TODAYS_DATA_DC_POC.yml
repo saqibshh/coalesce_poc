@@ -13,7 +13,7 @@ operation:
         CURRENT_TIMESTAMP() as created_at,
         CURRENT_TIMESTAMP() as updated_at
       FROM {{ ref('SRC', 'V_TODAYS_DATA') }} t
-      LEFT JOIN {{ ref('SRC', 'DC_POC') }} d 
+      FULL OUTER JOIN {{ ref('SRC', 'DC_POC') }} d 
         ON t.id = d.id AND d.active = TRUE
       WHERE d.id IS NULL  -- New records (empty table → all records inserted)
          OR (t.name != d.name OR t.name IS NULL != d.name IS NULL);  -- Changed records
@@ -31,7 +31,7 @@ operation:
     testsEnabled: true
   database: ""
   deployEnabled: true
-  description: "SCD Type 2 Dimension that processes changes from TODAYS_DATA and updates DC_POC accordingly"
+  description: SCD Type 2 Dimension that processes changes from TODAYS_DATA and updates DC_POC accordingly
   isMultisource: false
   locationName: SRC
   materializationType: view
@@ -49,7 +49,9 @@ operation:
         name: ID
         nullable: false
         sourceColumnReferences:
-          - columnReferences: []
+          - columnReferences:
+              - columnCounter: 469f4596-8d2b-419c-bf0f-f52dfbea41b5
+                stepCounter: b9d1ebac-2cda-47f1-9810-bda9592ad0c6
             transform: ""
       - appliedColumnTests: {}
         columnReference:
@@ -62,7 +64,9 @@ operation:
         name: NAME
         nullable: true
         sourceColumnReferences:
-          - columnReferences: []
+          - columnReferences:
+              - columnCounter: 324777f7-b64f-4b64-adb1-b2f292108cfa
+                stepCounter: b9d1ebac-2cda-47f1-9810-bda9592ad0c6
             transform: ""
       - appliedColumnTests: {}
         columnReference:
@@ -91,7 +95,7 @@ operation:
         nullable: false
         sourceColumnReferences:
           - columnReferences: []
-            transform: "CURRENT_TIMESTAMP()"
+            transform: CURRENT_TIMESTAMP()
       - appliedColumnTests: {}
         columnReference:
           columnCounter: 654ed108-b265-47d4-b324-8806f3a3dd01
@@ -105,7 +109,7 @@ operation:
         nullable: false
         sourceColumnReferences:
           - columnReferences: []
-            transform: "CURRENT_TIMESTAMP()"
+            transform: CURRENT_TIMESTAMP()
     cteString: ""
     enabledColumnTestIDs: []
     sourceMapping:
@@ -129,8 +133,7 @@ operation:
           - locationName: SRC
             nodeName: V_TODAYS_DATA
         join:
-          joinCondition: |-
-            FROM {{ ref('SRC', 'V_TODAYS_DATA') }} "V_TODAYS_DATA"
+          joinCondition: FROM {{ ref('SRC', 'V_TODAYS_DATA') }} "V_TODAYS_DATA"
         name: DIM_TODAYS_DATA_DC_POC
         noLinkRefs: []
   name: DIM_TODAYS_DATA_DC_POC
