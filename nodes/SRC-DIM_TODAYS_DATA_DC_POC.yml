@@ -3,7 +3,20 @@ id: 26acf2e7-b701-489c-8b5e-de65a7398185
 name: DIM_TODAYS_DATA_DC_POC
 operation:
   config:
-    postSQL: ""
+    postSQL: |-
+      -- Step 2: Insert new records directly into DC_POC table
+      INSERT INTO {{ ref('SRC', 'DC_POC') }} (id, name, active, created_at, updated_at)
+      SELECT 
+        t.id,
+        t.name,
+        TRUE as active,
+        CURRENT_TIMESTAMP() as created_at,
+        CURRENT_TIMESTAMP() as updated_at
+      FROM {{ ref('SRC', 'V_TODAYS_DATA') }} t
+      LEFT JOIN {{ ref('SRC', 'V_DC_POC') }} d 
+        ON t.id = d.id AND d.active = TRUE
+      WHERE d.id IS NULL  -- New records
+         OR (t.name != d.name OR t.name IS NULL != d.name IS NULL);  -- Changed records
     preSQL: |-
       UPDATE {{ ref('SRC', 'DC_POC') }} 
       SET active = FALSE, 
@@ -21,7 +34,7 @@ operation:
   description: "SCD Type 2 Dimension that processes changes from TODAYS_DATA and updates DC_POC accordingly"
   isMultisource: false
   locationName: SRC
-  materializationType: table
+  materializationType: view
   metadata:
     appliedNodeTests: []
     columns:
@@ -69,7 +82,7 @@ operation:
         nullable: false
         sourceColumnReferences:
           - columnReferences: []
-            transform: ""
+            transform: "TRUE"
       - appliedColumnTests: {}
         columnReference:
           columnCounter: 64f38ac1-c9c0-417c-b290-ebe871aac766
@@ -83,7 +96,7 @@ operation:
         nullable: false
         sourceColumnReferences:
           - columnReferences: []
-            transform: ""
+            transform: "CURRENT_TIMESTAMP()"
       - appliedColumnTests: {}
         columnReference:
           columnCounter: 654ed108-b265-47d4-b324-8806f3a3dd01
@@ -97,7 +110,7 @@ operation:
         nullable: false
         sourceColumnReferences:
           - columnReferences: []
-            transform: ""
+            transform: "CURRENT_TIMESTAMP()"
     cteString: ""
     enabledColumnTestIDs: []
     sourceMapping:
@@ -105,19 +118,7 @@ operation:
           V_DC_POC: 1ed7700b-fa23-47ff-aad0-2ecf93f42fca
           V_TODAYS_DATA: b9d1ebac-2cda-47f1-9810-bda9592ad0c6
         customSQL:
-          customSQL: |-
-            -- SCD Type 2: Insert new and changed records only
-            SELECT 
-              t.id,
-              t.name,
-              TRUE as active,
-              CURRENT_TIMESTAMP() as created_at,
-              CURRENT_TIMESTAMP() as updated_at
-            FROM {{ ref('SRC', 'V_TODAYS_DATA') }} t
-            LEFT JOIN {{ ref('SRC', 'V_DC_POC') }} d 
-              ON t.id = d.id AND d.active = TRUE
-            WHERE d.id IS NULL  -- New records
-               OR (t.name != d.name OR t.name IS NULL != d.name IS NULL)  -- Changed records
+          customSQL: ""
         dependencies:
           - locationName: SRC
             nodeName: V_DC_POC
