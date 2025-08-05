@@ -39,10 +39,8 @@ operation:
         name: ID
         nullable: false
         sourceColumnReferences:
-          - columnReferences:
-              - columnCounter: 0b809ad5-4221-4bc9-988d-26231e2c8e88
-                stepCounter: 35f0fb33-38ca-4588-a97c-cc8cc07afdce
-            transform: ""
+          - columnReferences: []
+            transform: id
       - appliedColumnTests: {}
         columnReference:
           columnCounter: name-col
@@ -54,10 +52,8 @@ operation:
         name: NAME
         nullable: true
         sourceColumnReferences:
-          - columnReferences:
-              - columnCounter: 5c3bbdf3-e2ba-4055-a064-19b965445aa7
-                stepCounter: 35f0fb33-38ca-4588-a97c-cc8cc07afdce
-            transform: ""
+          - columnReferences: []
+            transform: name
       - appliedColumnTests: {}
         columnReference:
           columnCounter: active-col
