@@ -8,18 +8,13 @@ operation:
     insertStrategy: INSERT
     postSQL: ""
     preSQL: |-
-      -- Step 1: Mark existing records as inactive for changed records
+      -- Step 1: Mark all existing records as inactive where we have new data
       UPDATE {{ this }} 
       SET active = FALSE, 
           updated_at = CURRENT_TIMESTAMP()
       WHERE id IN (
-        SELECT DISTINCT TODAYS_DATA.id 
-        FROM {{ ref('SRC', 'TODAYS_DATA') }} TODAYS_DATA
-        JOIN {{ this }} TARGET
-          ON TODAYS_DATA.id = TARGET.id 
-         AND TARGET.active = TRUE
-        WHERE MD5(TO_JSON(OBJECT_CONSTRUCT('name', TODAYS_DATA.name))) 
-           != MD5(TO_JSON(OBJECT_CONSTRUCT('name', TARGET.name)))
+        SELECT DISTINCT id 
+        FROM {{ ref('SRC', 'TODAYS_DATA') }}
       )
       AND active = TRUE;
     testsEnabled: true
@@ -118,12 +113,6 @@ operation:
         join:
           joinCondition: |-
             FROM {{ ref('SRC', 'TODAYS_DATA') }} "TODAYS_DATA"
-            LEFT JOIN {{ ref('SRC', 'DC_POC') }} "DC_POC"
-              ON TODAYS_DATA.id = DC_POC.id
-             AND DC_POC.active = TRUE
-            WHERE DC_POC.id IS NULL  -- New records
-               OR MD5(TO_JSON(OBJECT_CONSTRUCT('name', TODAYS_DATA.name))) 
-                  != MD5(TO_JSON(OBJECT_CONSTRUCT('name', DC_POC.name)))  -- Changed records
         name: scd_merge
         noLinkRefs: []
   name: scd_merge
