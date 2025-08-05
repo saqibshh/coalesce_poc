@@ -22,7 +22,7 @@ operation:
   description: SCD Type 2 Dimension that processes changes from TODAYS_DATA and updates DC_POC accordingly
   isMultisource: false
   locationName: SRC
-  materializationType: view
+  materializationType: table
   metadata:
     appliedNodeTests: []
     columns:
