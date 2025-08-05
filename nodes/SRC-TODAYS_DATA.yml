@@ -98,7 +98,7 @@ operation:
         join:
           joinCondition: |-
             FROM {{ ref('SRC', 'EXT_DC_POC_TABLE1') }} "EXT_DC_POC_TABLE1"
-            WHERE TO_DATE(year || '-' || month || '-' || day, 'YYYY-MM-DD') = CURRENT_DATE
+            WHERE TO_DATE(year || '-' || month || '-' || day, 'YYYY-MM-DD') = '2025-08-06'
         name: TODAYS_DATA
         noLinkRefs: []
   name: TODAYS_DATA

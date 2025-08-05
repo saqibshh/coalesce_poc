@@ -9,7 +9,7 @@ operation:
     postSQL: ""
     preSQL: |-
       -- Step 1: Mark existing records as inactive where we have new data
-      UPDATE {{ this }} 
+      UPDATE {{ ref('SRC', 'DC_POC') }} 
       SET active = FALSE, 
           updated_at = CURRENT_TIMESTAMP()
       WHERE id IN (
