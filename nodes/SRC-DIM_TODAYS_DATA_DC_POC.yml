@@ -16,8 +16,7 @@ operation:
       FROM {{ ref('SRC', 'V_TODAYS_DATA') }} t
       LEFT JOIN {{ ref('SRC', 'DC_POC') }} d 
         ON t.id = d.id AND d.active = TRUE
-      WHERE d.id IS NULL  -- New records (includes initial load when table is empty)
-         OR (t.name != d.name OR t.name IS NULL != d.name IS NULL);  -- Changed records
+      WHERE d.id IS NULL;  -- New records (includes initial load when table is empty)
     preSQL: |-
       -- Step 1: Mark existing records as inactive (only if table has data)
       UPDATE {{ ref('SRC', 'DC_POC') }} 
