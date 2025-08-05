@@ -123,9 +123,8 @@ operation:
           - locationName: SRC
             nodeName: EXT_DC_POC_TABLE1
         join:
-          joinCondition: |-
-            FROM {{ ref('SRC', 'EXT_DC_POC_TABLE1') }} "EXT_DC_POC_TABLE1"
-            WHERE TO_DATE(year || '-' || month || '-' || day, 'YYYY-MM-DD') = '2025-08-06'
+          joinCondition: |
+            FROM {{ ref('SRC', 'EXT_DC_POC_TABLE1') }} "EXT_DC_POC_TABLE1" WHERE TO_DATE("EXT_DC_POC_TABLE1"."YEAR" || '-' || "EXT_DC_POC_TABLE1"."MONTH" || '-' || "EXT_DC_POC_TABLE1"."DAY", 'YYYY-MM-DD') = '2025-08-06'
         name: V_TODAYS_DATA
         noLinkRefs: []
   name: V_TODAYS_DATA
