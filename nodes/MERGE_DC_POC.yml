@@ -1,6 +1,6 @@
 fileVersion: 1
 id: f47b2a3c-8d15-4f9e-b234-a1b2c3d4e5f6
-name: DC_POC
+name: MERGE_DC_POC
 operation:
   config:
     businessKeyColumns:
@@ -119,9 +119,9 @@ operation:
               ON "TODAYS_DATA".id = "DC_POC".id AND "DC_POC".active = TRUE
             WHERE "DC_POC".id IS NULL  -- Only insert new records or changed records
                OR ("TODAYS_DATA".name != "DC_POC".name OR "TODAYS_DATA".name IS NULL != "DC_POC".name IS NULL)
-        name: DC_POC
+        name: MERGE_DC_POC
         noLinkRefs: []
-  name: DC_POC
+  name: MERGE_DC_POC
   overrideSQL: false
   schema: ""
   sqlType: Dimension
