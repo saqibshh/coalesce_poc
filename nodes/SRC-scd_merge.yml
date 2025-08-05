@@ -8,18 +8,13 @@ operation:
     insertStrategy: INSERT
     postSQL: ""
     preSQL: |-
-      -- Step 1: Mark existing records as inactive only for changed records
+      -- Step 1: Mark existing records as inactive where we have new data
       UPDATE {{ this }} 
       SET active = FALSE, 
           updated_at = CURRENT_TIMESTAMP()
       WHERE id IN (
-        SELECT DISTINCT TODAYS_DATA.id 
-        FROM {{ ref('SRC', 'TODAYS_DATA') }} TODAYS_DATA
-        JOIN {{ this }} TARGET
-          ON TODAYS_DATA.id = TARGET.id 
-         AND TARGET.active = TRUE
-        WHERE MD5(TO_JSON(OBJECT_CONSTRUCT('name', TODAYS_DATA.name))) 
-           != MD5(TO_JSON(OBJECT_CONSTRUCT('name', TARGET.name)))
+        SELECT DISTINCT id 
+        FROM {{ ref('SRC', 'TODAYS_DATA') }}
       )
       AND active = TRUE;
     testsEnabled: true
@@ -44,8 +39,10 @@ operation:
         name: ID
         nullable: false
         sourceColumnReferences:
-          - columnReferences: []
-            transform: "TODAYS_DATA".id
+          - columnReferences:
+              - columnCounter: 0b809ad5-4221-4bc9-988d-26231e2c8e88
+                stepCounter: 35f0fb33-38ca-4588-a97c-cc8cc07afdce
+            transform: ""
       - appliedColumnTests: {}
         columnReference:
           columnCounter: name-col
@@ -57,8 +54,10 @@ operation:
         name: NAME
         nullable: true
         sourceColumnReferences:
-          - columnReferences: []
-            transform: "TODAYS_DATA".name
+          - columnReferences:
+              - columnCounter: 5c3bbdf3-e2ba-4055-a064-19b965445aa7
+                stepCounter: 35f0fb33-38ca-4588-a97c-cc8cc07afdce
+            transform: ""
       - appliedColumnTests: {}
         columnReference:
           columnCounter: active-col
@@ -114,12 +113,6 @@ operation:
         join:
           joinCondition: |-
             FROM {{ ref('SRC', 'TODAYS_DATA') }} "TODAYS_DATA"
-            LEFT JOIN {{ this }} "TARGET"
-              ON TODAYS_DATA.id = TARGET.id
-             AND TARGET.active = TRUE
-            WHERE TARGET.id IS NULL  -- New records (not in target)
-               OR MD5(TO_JSON(OBJECT_CONSTRUCT('name', TODAYS_DATA.name))) 
-                  != MD5(TO_JSON(OBJECT_CONSTRUCT('name', TARGET.name)))  -- Changed records
         name: scd_merge
         noLinkRefs: []
   name: scd_merge
