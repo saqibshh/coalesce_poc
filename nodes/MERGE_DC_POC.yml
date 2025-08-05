@@ -1,6 +1,6 @@
 fileVersion: 1
 id: f47b2a3c-8d15-4f9e-b234-a1b2c3d4e5f6
-name: DOC_POC
+name: DC_POC
 operation:
   config:
     businessKeyColumns:
@@ -8,20 +8,22 @@ operation:
     insertStrategy: INSERT
     postSQL: ""
     preSQL: |-
-      -- Step 1: Mark existing records as inactive where we have new data
+      -- SCD Type 2 Implementation: Mark existing records as inactive before inserting new versions
       UPDATE {{ ref('SRC', 'DC_POC') }} 
       SET active = FALSE, 
           updated_at = CURRENT_TIMESTAMP()
       WHERE id IN (
-        SELECT DISTINCT id 
-        FROM {{ ref('SRC', 'TODAYS_DATA') }}
-      )
-      AND active = TRUE;
+        SELECT DISTINCT t.id 
+        FROM {{ ref('SRC', 'TODAYS_DATA') }} t
+        INNER JOIN {{ ref('SRC', 'DC_POC') }} d ON t.id = d.id
+        WHERE d.active = TRUE 
+        AND (t.name != d.name OR t.name IS NULL != d.name IS NULL)
+      );
     testsEnabled: true
     truncateBefore: false
   database: ""
   deployEnabled: true
-  description: Implements SCD2 logic with active flag tracking
+  description: Implements SCD Type 2 merge logic using views for TODAYS_DATA and DC_POC
   isMultisource: false
   locationName: SRC
   materializationType: table
@@ -113,12 +115,16 @@ operation:
         join:
           joinCondition: |-
             FROM {{ ref('SRC', 'TODAYS_DATA') }} "TODAYS_DATA"
-        name: DOC_POC
+            LEFT JOIN {{ ref('SRC', 'DC_POC') }} "DC_POC" 
+              ON "TODAYS_DATA".id = "DC_POC".id AND "DC_POC".active = TRUE
+            WHERE "DC_POC".id IS NULL  -- Only insert new records or changed records
+               OR ("TODAYS_DATA".name != "DC_POC".name OR "TODAYS_DATA".name IS NULL != "DC_POC".name IS NULL)
+        name: DC_POC
         noLinkRefs: []
-  name: DOC_POC
+  name: DC_POC
   overrideSQL: false
   schema: ""
-  sqlType: Fact
+  sqlType: Dimension
   type: sql
   version: 1
 type: Node
