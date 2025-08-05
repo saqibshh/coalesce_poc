@@ -4,18 +4,30 @@ name: DIM_TODAYS_DATA_DC_POC
 operation:
   config:
     postSQL: |-
-      -- DEBUG: Simple insert to test if postSQL is working
+      -- SCD Type 2: Insert new and changed records into DC_POC
       INSERT INTO {{ ref('SRC', 'DC_POC') }} (id, name, active, created_at, updated_at)
       SELECT 
-        id,
-        name,
+        t.id,
+        t.name,
         TRUE as active,
         CURRENT_TIMESTAMP() as created_at,
         CURRENT_TIMESTAMP() as updated_at
-      FROM {{ ref('SRC', 'V_TODAYS_DATA') }};
+      FROM {{ ref('SRC', 'V_TODAYS_DATA') }} t
+      LEFT JOIN {{ ref('SRC', 'DC_POC') }} d 
+        ON t.id = d.id AND d.active = TRUE
+      WHERE d.id IS NULL  -- New records (empty table → all records inserted)
+         OR (t.name != d.name OR t.name IS NULL != d.name IS NULL);  -- Changed records
     preSQL: |-
-      -- DEBUG: Temporarily disabled preSQL to test postSQL
-      -- No preSQL operations for debugging
+      -- SCD Type 2: Mark existing records as inactive when they have changes
+      UPDATE {{ ref('SRC', 'DC_POC') }} 
+      SET active = FALSE, 
+          updated_at = CURRENT_TIMESTAMP()
+      WHERE EXISTS (
+        SELECT 1 FROM {{ ref('SRC', 'V_TODAYS_DATA') }} t
+        WHERE t.id = {{ ref('SRC', 'DC_POC') }}.id
+        AND {{ ref('SRC', 'DC_POC') }}.active = TRUE
+        AND (t.name != {{ ref('SRC', 'DC_POC') }}.name OR t.name IS NULL != {{ ref('SRC', 'DC_POC') }}.name IS NULL)
+      );
     testsEnabled: true
   database: ""
   deployEnabled: true
@@ -105,16 +117,7 @@ operation:
           V_DC_POC: 1ed7700b-fa23-47ff-aad0-2ecf93f42fca
           V_TODAYS_DATA: b9d1ebac-2cda-47f1-9810-bda9592ad0c6
         customSQL:
-          customSQL: |-
-            -- Debug: Show what data is available from V_TODAYS_DATA
-            SELECT 
-              id,
-              name,
-              TRUE as active,
-              CURRENT_TIMESTAMP() as created_at,
-              CURRENT_TIMESTAMP() as updated_at,
-              'DEBUG: Records from V_TODAYS_DATA' as debug_info
-            FROM {{ ref('SRC', 'V_TODAYS_DATA') }}
+          customSQL: ""
         dependencies:
           - locationName: SRC
             nodeName: V_DC_POC
