@@ -28,6 +28,17 @@ operation:
         AND {{ ref('SRC', 'DC_POC') }}.active = TRUE
         AND (t.name != {{ ref('SRC', 'DC_POC') }}.name OR t.name IS NULL != {{ ref('SRC', 'DC_POC') }}.name IS NULL)
       );
+      
+      -- Mark existing records as inactive when their ID is not present in today's data
+      UPDATE {{ ref('SRC', 'DC_POC') }} 
+      SET active = FALSE, 
+          updated_at = CURRENT_TIMESTAMP()
+      WHERE active = TRUE
+        AND id NOT IN (
+          SELECT DISTINCT id 
+          FROM {{ ref('SRC', 'V_TODAYS_DATA') }}
+          WHERE id IS NOT NULL
+        );
     testsEnabled: true
   database: ""
   deployEnabled: true
