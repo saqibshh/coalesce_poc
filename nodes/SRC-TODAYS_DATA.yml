@@ -12,7 +12,7 @@ operation:
   isMultisource: false
   locationName: SRC
   truncateBefore: true
-  materializationType: table
+  materializationType: view
   metadata:
     appliedNodeTests: []
     columns:
