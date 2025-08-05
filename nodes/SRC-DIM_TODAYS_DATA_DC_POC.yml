@@ -4,7 +4,8 @@ name: DIM_TODAYS_DATA_DC_POC
 operation:
   config:
     postSQL: |-
-      -- Step 2: Insert new records directly into DC_POC table
+      -- Step 2: Insert new and changed records directly into DC_POC table
+      -- This handles both initial load (empty table) and ongoing SCD Type 2 updates
       INSERT INTO {{ ref('SRC', 'DC_POC') }} (id, name, active, created_at, updated_at)
       SELECT 
         t.id,
@@ -13,20 +14,20 @@ operation:
         CURRENT_TIMESTAMP() as created_at,
         CURRENT_TIMESTAMP() as updated_at
       FROM {{ ref('SRC', 'V_TODAYS_DATA') }} t
-      LEFT JOIN {{ ref('SRC', 'V_DC_POC') }} d 
+      LEFT JOIN {{ ref('SRC', 'DC_POC') }} d 
         ON t.id = d.id AND d.active = TRUE
-      WHERE d.id IS NULL  -- New records
+      WHERE d.id IS NULL  -- New records (includes initial load when table is empty)
          OR (t.name != d.name OR t.name IS NULL != d.name IS NULL);  -- Changed records
     preSQL: |-
+      -- Step 1: Mark existing records as inactive (only if table has data)
       UPDATE {{ ref('SRC', 'DC_POC') }} 
       SET active = FALSE, 
           updated_at = CURRENT_TIMESTAMP()
-      WHERE id IN (
-      SELECT DISTINCT t.id 
-      FROM {{ ref('SRC', 'V_TODAYS_DATA') }} t
-      INNER JOIN {{ ref('SRC', 'V_DC_POC') }} d ON t.id = d.id
-      WHERE d.active = TRUE 
-      AND (t.name != d.name OR t.name IS NULL != d.name IS NULL)
+      WHERE EXISTS (
+        SELECT 1 FROM {{ ref('SRC', 'V_TODAYS_DATA') }} t
+        WHERE t.id = {{ ref('SRC', 'DC_POC') }}.id
+        AND {{ ref('SRC', 'DC_POC') }}.active = TRUE
+        AND (t.name != {{ ref('SRC', 'DC_POC') }}.name OR t.name IS NULL != {{ ref('SRC', 'DC_POC') }}.name IS NULL)
       );
     testsEnabled: true
   database: ""
