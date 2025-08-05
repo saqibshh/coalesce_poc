@@ -47,13 +47,10 @@ operation:
         dataType: NUMBER(38,0)
         description: ""
         isBusinessKey: true
-        isSurrogateKey: true
         name: ID
-        nullable: true
+        nullable: false
         sourceColumnReferences:
-          - columnReferences:
-              - columnCounter: 469f4596-8d2b-419c-bf0f-f52dfbea41b5
-                stepCounter: b9d1ebac-2cda-47f1-9810-bda9592ad0c6
+          - columnReferences: []
             transform: ""
       - appliedColumnTests: {}
         columnReference:
@@ -66,9 +63,7 @@ operation:
         name: NAME
         nullable: true
         sourceColumnReferences:
-          - columnReferences:
-              - columnCounter: 324777f7-b64f-4b64-adb1-b2f292108cfa
-                stepCounter: b9d1ebac-2cda-47f1-9810-bda9592ad0c6
+          - columnReferences: []
             transform: ""
       - appliedColumnTests: {}
         columnReference:
@@ -119,7 +114,15 @@ operation:
           V_DC_POC: 1ed7700b-fa23-47ff-aad0-2ecf93f42fca
           V_TODAYS_DATA: b9d1ebac-2cda-47f1-9810-bda9592ad0c6
         customSQL:
-          customSQL: ""
+          customSQL: |-
+            -- Staging view for data preview - actual inserts happen in postSQL
+            SELECT 
+              id,
+              name,
+              TRUE as active,
+              CURRENT_TIMESTAMP() as created_at,
+              CURRENT_TIMESTAMP() as updated_at
+            FROM {{ ref('SRC', 'V_TODAYS_DATA') }}
         dependencies:
           - locationName: SRC
             nodeName: V_DC_POC
