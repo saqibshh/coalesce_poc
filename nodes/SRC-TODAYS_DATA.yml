@@ -11,6 +11,7 @@ operation:
   description: ""
   isMultisource: false
   locationName: SRC
+  truncateBefore: true
   materializationType: table
   metadata:
     appliedNodeTests: []
