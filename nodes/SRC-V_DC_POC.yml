@@ -1,6 +1,6 @@
 fileVersion: 1
 id: 1ed7700b-fa23-47ff-aad0-2ecf93f42fca
-name: STG_DC_POC
+name: V_DC_POC
 operation:
   config:
     insertStrategy: INSERT
@@ -99,9 +99,9 @@ operation:
             nodeName: DC_POC
         join:
           joinCondition: FROM {{ ref('SRC', 'DC_POC') }} "DC_POC"
-        name: STG_DC_POC
+        name: V_DC_POC
         noLinkRefs: []
-  name: STG_DC_POC
+  name: V_DC_POC
   overrideSQL: false
   schema: ""
   sqlType: View
