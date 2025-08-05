@@ -5,23 +5,23 @@ operation:
   config:
     businessKeyColumns:
       - id
-    insertStrategy: MERGE
-    mergeConfig:
-      columnsToUpdate:
-        active: false
-        updated_at: CURRENT_TIMESTAMP()
-      insertColumns:
-        - id
-        - name
-        - active
-        - created_at
-        - updated_at
-      insertFilter: ""
-      keys:
-        - id
-      updateFilter: ""
+    insertStrategy: INSERT
     postSQL: ""
-    preSQL: ""
+    preSQL: |-
+      -- Step 1: Mark existing records as inactive for changed records
+      UPDATE {{ this }} 
+      SET active = FALSE, 
+          updated_at = CURRENT_TIMESTAMP()
+      WHERE id IN (
+        SELECT DISTINCT TODAYS_DATA.id 
+        FROM {{ ref('SRC', 'TODAYS_DATA') }} TODAYS_DATA
+        JOIN {{ this }} TARGET
+          ON TODAYS_DATA.id = TARGET.id 
+         AND TARGET.active = TRUE
+        WHERE MD5(TO_JSON(OBJECT_CONSTRUCT('name', TODAYS_DATA.name))) 
+           != MD5(TO_JSON(OBJECT_CONSTRUCT('name', TARGET.name)))
+      )
+      AND active = TRUE;
     testsEnabled: true
     truncateBefore: false
   database: ""
@@ -121,6 +121,9 @@ operation:
             LEFT JOIN {{ ref('SRC', 'DC_POC') }} "DC_POC"
               ON TODAYS_DATA.id = DC_POC.id
              AND DC_POC.active = TRUE
+            WHERE DC_POC.id IS NULL  -- New records
+               OR MD5(TO_JSON(OBJECT_CONSTRUCT('name', TODAYS_DATA.name))) 
+                  != MD5(TO_JSON(OBJECT_CONSTRUCT('name', DC_POC.name)))  -- Changed records
         name: scd_merge
         noLinkRefs: []
   name: scd_merge
