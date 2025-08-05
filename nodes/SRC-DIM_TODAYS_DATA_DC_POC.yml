@@ -18,7 +18,7 @@ operation:
     testsEnabled: true
   database: ""
   deployEnabled: true
-  description: ""
+  description: "SCD Type 2 Dimension that processes changes from TODAYS_DATA and updates DC_POC accordingly"
   isMultisource: false
   locationName: SRC
   materializationType: table
@@ -33,6 +33,7 @@ operation:
         dataType: NUMBER(38,0)
         description: ""
         isBusinessKey: true
+        isSurrogateKey: true
         name: ID
         nullable: true
         sourceColumnReferences:
@@ -63,13 +64,12 @@ operation:
         dataType: BOOLEAN
         description: ""
         isChangeTracking: true
+        isSystemCurrentFlag: true
         name: ACTIVE
         nullable: false
         sourceColumnReferences:
-          - columnReferences:
-              - columnCounter: 2942916a-0ad1-4229-8a5f-bd74c838b665
-                stepCounter: 1ed7700b-fa23-47ff-aad0-2ecf93f42fca
-            transform: "TRUE"
+          - columnReferences: []
+            transform: ""
       - appliedColumnTests: {}
         columnReference:
           columnCounter: 64f38ac1-c9c0-417c-b290-ebe871aac766
@@ -78,13 +78,12 @@ operation:
         dataType: TIMESTAMP_NTZ(9)
         description: ""
         isChangeTracking: true
+        isSystemStartDate: true
         name: CREATED_AT
         nullable: false
         sourceColumnReferences:
-          - columnReferences:
-              - columnCounter: 843f37ed-31df-4785-b560-7f3796b3436d
-                stepCounter: 1ed7700b-fa23-47ff-aad0-2ecf93f42fca
-            transform: CURRENT_TIMESTAMP()
+          - columnReferences: []
+            transform: ""
       - appliedColumnTests: {}
         columnReference:
           columnCounter: 654ed108-b265-47d4-b324-8806f3a3dd01
@@ -93,13 +92,12 @@ operation:
         dataType: TIMESTAMP_NTZ(9)
         description: ""
         isChangeTracking: true
+        isSystemUpdateDate: true
         name: UPDATED_AT
         nullable: false
         sourceColumnReferences:
-          - columnReferences:
-              - columnCounter: 5148527b-4c17-4a93-96b5-548da18df614
-                stepCounter: 1ed7700b-fa23-47ff-aad0-2ecf93f42fca
-            transform: CURRENT_TIMESTAMP()
+          - columnReferences: []
+            transform: ""
     cteString: ""
     enabledColumnTestIDs: []
     sourceMapping:
@@ -107,7 +105,19 @@ operation:
           V_DC_POC: 1ed7700b-fa23-47ff-aad0-2ecf93f42fca
           V_TODAYS_DATA: b9d1ebac-2cda-47f1-9810-bda9592ad0c6
         customSQL:
-          customSQL: ""
+          customSQL: |-
+            -- SCD Type 2: Insert new and changed records only
+            SELECT 
+              t.id,
+              t.name,
+              TRUE as active,
+              CURRENT_TIMESTAMP() as created_at,
+              CURRENT_TIMESTAMP() as updated_at
+            FROM {{ ref('SRC', 'V_TODAYS_DATA') }} t
+            LEFT JOIN {{ ref('SRC', 'V_DC_POC') }} d 
+              ON t.id = d.id AND d.active = TRUE
+            WHERE d.id IS NULL  -- New records
+               OR (t.name != d.name OR t.name IS NULL != d.name IS NULL)  -- Changed records
         dependencies:
           - locationName: SRC
             nodeName: V_DC_POC
@@ -116,14 +126,12 @@ operation:
         join:
           joinCondition: |-
             FROM {{ ref('SRC', 'V_TODAYS_DATA') }} "V_TODAYS_DATA"
-            INNER JOIN {{ ref('SRC', 'V_DC_POC') }} "V_DC_POC"
-            ON "V_TODAYS_DATA"."ID" = "V_DC_POC"."ID"
         name: DIM_TODAYS_DATA_DC_POC
         noLinkRefs: []
   name: DIM_TODAYS_DATA_DC_POC
   overrideSQL: false
   schema: ""
-  sqlType: Fact
+  sqlType: Dimension
   type: sql
   version: 1
 type: Node
