@@ -67,10 +67,8 @@ operation:
         name: ACTIVE
         nullable: false
         sourceColumnReferences:
-          - columnReferences:
-              - columnCounter: 2942916a-0ad1-4229-8a5f-bd74c838b665
-                stepCounter: 1ed7700b-fa23-47ff-aad0-2ecf93f42fca
-            transform: "TRUE"
+          - columnReferences: []
+            transform: ""
       - appliedColumnTests: {}
         columnReference:
           columnCounter: 61ac1b0b-e9fd-477e-b3fd-f466ebff5181
@@ -82,10 +80,8 @@ operation:
         name: CREATED_AT
         nullable: false
         sourceColumnReferences:
-          - columnReferences:
-              - columnCounter: 843f37ed-31df-4785-b560-7f3796b3436d
-                stepCounter: 1ed7700b-fa23-47ff-aad0-2ecf93f42fca
-            transform: CURRENT_TIMESTAMP()
+          - columnReferences: []
+            transform: ""
       - appliedColumnTests: {}
         columnReference:
           columnCounter: 795b56c0-2962-439b-96f8-68b748e4f4dd
@@ -97,10 +93,8 @@ operation:
         name: UPDATED_AT
         nullable: false
         sourceColumnReferences:
-          - columnReferences:
-              - columnCounter: 5148527b-4c17-4a93-96b5-548da18df614
-                stepCounter: 1ed7700b-fa23-47ff-aad0-2ecf93f42fca
-            transform: CURRENT_TIMESTAMP()
+          - columnReferences: []
+            transform: ""
     cteString: ""
     enabledColumnTestIDs: []
     sourceMapping:
@@ -108,7 +102,19 @@ operation:
           V_DC_POC: 1ed7700b-fa23-47ff-aad0-2ecf93f42fca
           V_TODAYS_DATA: b9d1ebac-2cda-47f1-9810-bda9592ad0c6
         customSQL:
-          customSQL: ""
+          customSQL: |-
+            -- SCD Type 2: Select records that are new or have changed
+            SELECT 
+              t.id,
+              t.name,
+              TRUE as active,
+              CURRENT_TIMESTAMP() as created_at,
+              CURRENT_TIMESTAMP() as updated_at
+            FROM {{ ref('SRC', 'V_TODAYS_DATA') }} t
+            LEFT JOIN {{ ref('SRC', 'V_DC_POC') }} d 
+              ON t.id = d.id AND d.active = TRUE
+            WHERE d.id IS NULL  -- New records
+               OR (t.name != d.name OR t.name IS NULL != d.name IS NULL)  -- Changed records
         dependencies:
           - locationName: SRC
             nodeName: V_DC_POC
@@ -117,10 +123,6 @@ operation:
         join:
           joinCondition: |-
             FROM {{ ref('SRC', 'V_TODAYS_DATA') }} "V_TODAYS_DATA"
-            LEFT JOIN {{ ref('SRC', 'V_DC_POC') }} "V_DC_POC"
-              ON "V_TODAYS_DATA".id = "V_DC_POC".id AND "V_DC_POC".active = TRUE
-            WHERE "V_DC_POC".id IS NULL  -- New records
-               OR ("V_TODAYS_DATA".name != "V_DC_POC".name OR "V_TODAYS_DATA".name IS NULL != "V_DC_POC".name IS NULL)  -- Changed records
         name: DIM_TODAYS_DATA_DC_POC
         noLinkRefs: []
   name: DIM_TODAYS_DATA_DC_POC
