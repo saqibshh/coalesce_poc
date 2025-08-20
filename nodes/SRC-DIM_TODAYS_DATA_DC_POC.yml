@@ -23,7 +23,6 @@ operation:
       SET active = FALSE, 
           updated_at = CURRENT_TIMESTAMP()
       WHERE active = TRUE
-      -- test
         AND (
           -- Records with changes
           EXISTS (
