@@ -23,6 +23,7 @@ operation:
       SET active = FALSE, 
           updated_at = CURRENT_TIMESTAMP()
       WHERE active = TRUE
+      -- test
         AND (
           -- Records with changes
           EXISTS (
@@ -126,7 +127,7 @@ operation:
           stepCounter: 26acf2e7-b701-489c-8b5e-de65a7398185
         config: {}
         dataType: NUMBER
-        description: "System version for SCD Type 2 tracking"
+        description: System version for SCD Type 2 tracking
         isChangeTracking: true
         isSystemVersion: true
         name: SYSTEM_VERSION
@@ -140,28 +141,28 @@ operation:
           stepCounter: 26acf2e7-b701-489c-8b5e-de65a7398185
         config: {}
         dataType: TIMESTAMP_NTZ(9)
-        description: "System end date for SCD Type 2 tracking"
+        description: System end date for SCD Type 2 tracking
         isChangeTracking: true
         isSystemEndDate: true
         name: SYSTEM_END_DATE
         nullable: false
         sourceColumnReferences:
           - columnReferences: []
-            transform: "CAST('2999-12-31 00:00:00' AS TIMESTAMP)"
+            transform: CAST('2999-12-31 00:00:00' AS TIMESTAMP)
       - appliedColumnTests: {}
         columnReference:
           columnCounter: system-create-date-col
           stepCounter: 26acf2e7-b701-489c-8b5e-de65a7398185
         config: {}
         dataType: TIMESTAMP_NTZ(9)
-        description: "System create date for SCD Type 2 tracking"
+        description: System create date for SCD Type 2 tracking
         isChangeTracking: true
         isSystemCreateDate: true
         name: SYSTEM_CREATE_DATE
         nullable: false
         sourceColumnReferences:
           - columnReferences: []
-            transform: "CURRENT_TIMESTAMP()"
+            transform: CURRENT_TIMESTAMP()
     cteString: ""
     enabledColumnTestIDs: []
     sourceMapping:
