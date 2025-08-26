@@ -1,0 +1,40 @@
+config:
+  entities:
+    nodeTypes:
+      "298":
+        defaultStorageLocation: null
+        isDisabled: false
+      "299":
+        defaultStorageLocation: null
+        isDisabled: false
+      "302":
+        defaultStorageLocation: null
+        isDisabled: false
+      "303":
+        defaultStorageLocation: null
+        isDisabled: false
+      "323":
+        defaultStorageLocation: null
+        isDisabled: false
+      "324":
+        defaultStorageLocation: null
+        isDisabled: false
+      "327":
+        defaultStorageLocation: null
+        isDisabled: false
+      "346":
+        defaultStorageLocation: null
+        isDisabled: false
+      "347":
+        defaultStorageLocation: null
+        isDisabled: false
+      "372":
+        defaultStorageLocation: null
+        isDisabled: false
+  packageVariables: ""
+fileVersion: 1
+id: "@coalesce/snowflake/external-data-package"
+name: test-pkg
+packageID: "@coalesce/snowflake/external-data-package"
+releaseID: aca03ab7-7129-4d1c-85f8-0ac8d5a05174
+type: Package
