@@ -12,10 +12,12 @@
     {% endif %}
 
     {{ stage('Dynamic COPY Configuration') }}
+    
     -- Set control table reference
     {% set control_table = config.controlTableSchema + '.' + config.controlTableName %}
 
     {{ stage('COPY INTO ' + node.name) }}
+    
     COPY INTO {{ ref_no_link(node.location.name, node.name) }}
     FROM (
         SELECT 
