@@ -26,13 +26,21 @@ operation:
     fileType: CSV
     forceLoad: ""
     inferschema: false
-    intextstage: false
+    intextstage: true
     loadUncertainFiles: ""
     mulline: true
     nullchar: ('\N')
     onError: ""
     parsehdr: true
     parsehdr1: true
+    preSQL: |
+      DECLARE my_stage STRING;
+
+      -- 2. Fetch the stage path from your control table
+      SELECT stage_name
+      INTO :my_stage
+      FROM FUGETRON_INTERNAL_DEMO.POC_DEMO.COPY_STAGE_CONTROL
+      WHERE active = True;
     purgeBehavior: ""
     recDelim: |+
 
@@ -41,8 +49,8 @@ operation:
     sizeLimit: ""
     skipBlankLines: false
     skipHeader: "1"
-    stageName: :my_stage
-    stageStorageLocationName: Enter Storage Location name
+    stageName: ":my_stage"
+    stageStorageLocationName: SRC
     storageintegration: ""
     stripouterarray: true
     subfolder: DC_POC/2025/08/06
@@ -52,14 +60,6 @@ operation:
     truncateBefore: false
     truncateColumns: ""
     usevectscan: false
-    preSQL: |
-      DECLARE my_stage STRING;
-
-      -- 2. Fetch the stage path from your control table
-      SELECT stage_name
-      INTO :my_stage
-      FROM FUGETRON_INTERNAL_DEMO.POC_DEMO.COPY_STAGE_CONTROL
-      WHERE active = True;
   database: ""
   deployEnabled: true
   description: ""
@@ -103,74 +103,6 @@ operation:
           - columnReferences: []
             transform: current_timestamp()::timestamp_ntz
         sysLdTs: true
-      - acceptedValues:
-          strictMatch: true
-          values: []
-        appliedColumnTests: {}
-        columnReference:
-          columnCounter: 41a03586-3847-452e-bfc2-6ddca9578b22
-          stepCounter: 9ffac050-4d2f-4b40-95ee-9aacecc3ac19
-        config: {}
-        dataType: STRING
-        defaultValue: ""
-        description: ""
-        name: FILENAME
-        nullable: true
-        sourceColumnReferences:
-          - columnReferences: []
-            transform: METADATA$FILENAME
-        sysFlNm: true
-      - acceptedValues:
-          strictMatch: true
-          values: []
-        appliedColumnTests: {}
-        columnReference:
-          columnCounter: 64af2b37-a9ad-456f-8eaa-b714f6bde0b4
-          stepCounter: 9ffac050-4d2f-4b40-95ee-9aacecc3ac19
-        config: {}
-        dataType: NUMBER
-        defaultValue: ""
-        description: ""
-        name: FILE_ROW_NUMBER
-        nullable: true
-        sourceColumnReferences:
-          - columnReferences: []
-            transform: METADATA$FILE_ROW_NUMBER
-        sysFlRwNm: true
-      - acceptedValues:
-          strictMatch: true
-          values: []
-        appliedColumnTests: {}
-        columnReference:
-          columnCounter: 58c03a53-1132-4e22-b62d-0761c669b056
-          stepCounter: 9ffac050-4d2f-4b40-95ee-9aacecc3ac19
-        config: {}
-        dataType: TIMESTAMP_NTZ
-        defaultValue: ""
-        description: ""
-        name: FILE_LAST_MODIFIED
-        nullable: true
-        sourceColumnReferences:
-          - columnReferences: []
-            transform: METADATA$FILE_LAST_MODIFIED
-        sysFlLtMd: true
-      - acceptedValues:
-          strictMatch: true
-          values: []
-        appliedColumnTests: {}
-        columnReference:
-          columnCounter: 8a2128ef-0542-43af-ae34-ac936577a979
-          stepCounter: 9ffac050-4d2f-4b40-95ee-9aacecc3ac19
-        config: {}
-        dataType: TIMESTAMP_NTZ
-        defaultValue: ""
-        description: ""
-        name: SCAN_TIME
-        nullable: true
-        sourceColumnReferences:
-          - columnReferences: []
-            transform: METADATA$START_SCAN_TIME
-        sysFlScTm: true
     cteString: ""
     enabledColumnTestIDs: []
     sourceMapping:
