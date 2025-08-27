@@ -1,0 +1,101 @@
+fileVersion: 1
+id: CopyCustom
+isDisabled: false
+metadata:
+  defaultStorageLocation: null
+  error: null
+  nodeMetadataSpec: |
+    capitalized: Copy Dynamic
+    short: COPY_CUSTOM
+    plural: Copy Dynamics
+    tagColor: '#FF6B35'
+
+    config:
+    - groupName: Options
+      items:
+      - type: materializationSelector
+        default: table
+        options:
+        - table
+        - view
+        isRequired: true
+
+      - displayName: Control Table Schema
+        attributeName: controlTableSchema
+        type: textBox
+        default: "FUGETRON_INTERNAL_DEMO.POC_DEMO"
+        isRequired: true
+        description: "Schema for control table (e.g., FUGETRON_INTERNAL_DEMO.POC_DEMO)"
+
+      - displayName: Control Table Name
+        attributeName: controlTableName
+        type: textBox
+        default: "COPY_STAGE_CONTROL"
+        isRequired: true
+        description: "Name of control table"
+
+      - displayName: Environment
+        attributeName: environment
+        type: dropdownSelector
+        default: DEV
+        options:
+        - DEV
+        - PROD
+        - TEST
+        isRequired: true
+
+      - displayName: File Type
+        attributeName: fileType
+        type: dropdownSelector
+        default: CSV
+        options:
+        - CSV
+        - JSON
+        - PARQUET
+        - AVRO
+        isRequired: true
+
+      - displayName: Field Delimiter
+        attributeName: fieldDelim
+        type: textBox
+        default: ","
+        isRequired: false
+
+      - displayName: Skip Header
+        attributeName: skipHeader
+        type: textBox
+        default: "1"
+        isRequired: false
+
+      - displayName: Subfolder
+        attributeName: subfolder
+        type: textBox
+        default: "DC_POC/2025/08/06"
+        isRequired: true
+        description: "Subfolder path within the stage"
+
+      - displayName: File Pattern
+        attributeName: filePattern
+        type: textBox
+        default: ".*\\.csv$"
+        isRequired: true
+        description: "Regex pattern for file matching"
+
+      - displayName: Enable Tests
+        attributeName: testsEnabled
+        type: toggleButton
+        default: true
+
+      - displayName: Pre-SQL
+        attributeName: preSQL
+        type: textBox
+        syntax: sql
+        isRequired: false
+
+      - displayName: Post-SQL
+        attributeName: postSQL
+        type: textBox
+        syntax: sql
+        isRequired: false
+name: CopyCustom
+type: NodeType
