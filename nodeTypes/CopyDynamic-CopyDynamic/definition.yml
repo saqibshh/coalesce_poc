@@ -67,6 +67,20 @@ metadata:
         default: "1"
         isRequired: false
 
+      - displayName: Subfolder
+        attributeName: subfolder
+        type: textBox
+        default: "DC_POC/2025/08/06"
+        isRequired: true
+        description: "Subfolder path within the stage"
+
+      - displayName: File Pattern
+        attributeName: filePattern
+        type: textBox
+        default: ".*\.csv$"
+        isRequired: true
+        description: "Regex pattern for file matching"
+
       - displayName: Enable Tests
         attributeName: testsEnabled
         type: toggleButton

@@ -1,37 +1,17 @@
--- Dynamic COPY template reading from control table
-{% set control_table = config.controlTableSchema + '.' + config.controlTableName %}
-
+-- Simple COPY template - just like data package but with dynamic stage name
 {% if config.preSQL %}
--- Pre-SQL execution
 {{ config.preSQL }}
 {% endif %}
 
--- Dynamic COPY operation
 COPY INTO {{ ref_no_link(node.location.name, node.name) }}
-FROM (
-    SELECT 
-        $1::VARIANT AS SRC,
-        current_timestamp()::timestamp_ntz AS LOAD_TIMESTAMP,
-        METADATA$FILENAME AS FILENAME,
-        METADATA$FILE_ROW_NUMBER AS FILE_ROW_NUMBER,
-        METADATA$FILE_LAST_MODIFIED AS FILE_LAST_MODIFIED,
-        METADATA$START_SCAN_TIME AS SCAN_TIME
-    FROM @(
-        SELECT stage_name 
-        FROM {{ control_table }} 
-        WHERE node_name = '{{ node.name }}' 
-        AND environment = '{{ config.environment }}' 
-        AND is_active = true
-        LIMIT 1
-    ) / (
-        SELECT subfolder 
-        FROM {{ control_table }} 
-        WHERE node_name = '{{ node.name }}' 
-        AND environment = '{{ config.environment }}' 
-        AND is_active = true
-        LIMIT 1
-    )
-)
+FROM @(
+    SELECT stage_name 
+    FROM {{ config.controlTableSchema }}.{{ config.controlTableName }} 
+    WHERE node_name = '{{ node.name }}' 
+    AND environment = '{{ config.environment }}' 
+    AND is_active = true
+    LIMIT 1
+)/{{ config.subfolder }}
 FILE_FORMAT = (
     TYPE = '{{ config.fileType }}'
     {% if config.fieldDelim %}
@@ -41,16 +21,8 @@ FILE_FORMAT = (
     SKIP_HEADER = {{ config.skipHeader }}
     {% endif %}
 )
-PATTERN = (
-    SELECT file_pattern 
-    FROM {{ control_table }} 
-    WHERE node_name = '{{ node.name }}' 
-    AND environment = '{{ config.environment }}' 
-    AND is_active = true
-    LIMIT 1
-);
+PATTERN = '{{ config.filePattern }}';
 
 {% if config.postSQL %}
--- Post-SQL execution
 {{ config.postSQL }}
 {% endif %}
