@@ -1,0 +1,119 @@
+fileVersion: 1
+id: CopyDynamic
+isDisabled: false
+metadata:
+  defaultStorageLocation: null
+  error: null
+  nodeMetadataSpec: |
+    capitalized: Copy Dynamic
+    short: CPYD
+    plural: Copy Dynamics
+    tagColor: '#FF6B35'
+
+    config:
+    - groupName: Options
+      items:
+      - type: materializationSelector
+        default: table
+        options:
+        - table
+        - view
+        isRequired: true
+
+      - displayName: Control Table Schema
+        attributeName: controlTableSchema
+        type: textBox
+        default: "FUGETRON_INTERNAL_DEMO.POC_DEMO"
+        isRequired: true
+        description: "Schema for control table (e.g., FUGETRON_INTERNAL_DEMO.POC_DEMO)"
+
+      - displayName: Control Table Name
+        attributeName: controlTableName
+        type: textBox
+        default: "COPY_STAGE_CONTROL"
+        isRequired: true
+        description: "Name of control table"
+
+      - displayName: Environment
+        attributeName: environment
+        type: dropdownSelector
+        default: DEV
+        options:
+        - DEV
+        - PROD
+        - TEST
+        isRequired: true
+
+      - displayName: File Type
+        attributeName: fileType
+        type: dropdownSelector
+        default: CSV
+        options:
+        - CSV
+        - JSON
+        - PARQUET
+        - AVRO
+        isRequired: true
+
+      - displayName: Field Delimiter
+        attributeName: fieldDelim
+        type: textBox
+        default: ","
+        isRequired: false
+
+      - displayName: Skip Header
+        attributeName: skipHeader
+        type: textBox
+        default: "1"
+        isRequired: false
+
+      - displayName: Enable Tests
+        attributeName: testsEnabled
+        type: toggleButton
+        default: true
+
+      - displayName: Pre-SQL
+        attributeName: preSQL
+        type: textBox
+        syntax: sql
+        isRequired: false
+
+      - displayName: Post-SQL
+        attributeName: postSQL
+        type: textBox
+        syntax: sql
+        isRequired: false
+
+    systemColumns:
+    - displayName: LOAD_TIMESTAMP
+      transform: current_timestamp()::timestamp_ntz
+      dataType: TIMESTAMP_NTZ
+      placement: end
+      attributeName: isSystemLoadTimestamp
+
+    - displayName: FILENAME
+      transform: METADATA$FILENAME
+      dataType: STRING
+      placement: end
+      attributeName: isSystemFilename
+
+    - displayName: FILE_ROW_NUMBER
+      transform: METADATA$FILE_ROW_NUMBER
+      dataType: NUMBER
+      placement: end
+      attributeName: isSystemFileRowNumber
+
+    - displayName: FILE_LAST_MODIFIED
+      transform: METADATA$FILE_LAST_MODIFIED
+      dataType: TIMESTAMP_NTZ
+      placement: end
+      attributeName: isSystemFileLastModified
+
+    - displayName: SCAN_TIME
+      transform: METADATA$START_SCAN_TIME
+      dataType: TIMESTAMP_NTZ
+      placement: end
+      attributeName: isSystemScanTime
+
+name: CopyDynamic
+type: NodeType

@@ -1,0 +1,152 @@
+fileVersion: 1
+id: copy-dynamic-node-example
+name: COPY_NODE_DYNAMIC
+operation:
+  config:
+    controlTableSchema: FUGETRON_INTERNAL_DEMO.POC_DEMO
+    controlTableName: COPY_STAGE_CONTROL
+    environment: DEV
+    fileType: CSV
+    fieldDelim: ","
+    skipHeader: "1"
+    testsEnabled: true
+    preSQL: |
+      -- Log the configuration being used
+      SELECT 
+        'Using CopyDynamic node with environment: ' || '{{ config.environment }}' ||
+        ', Control table: ' || '{{ config.controlTableSchema }}.{{ config.controlTableName }}' AS config_info;
+      
+      -- You can add any additional Pre-SQL logic here
+      -- For example, setting session variables, logging, etc.
+    postSQL: |
+      -- Post-SQL for any cleanup or logging
+      SELECT 'COPY operation completed for node: ' || '{{ node.name }}' AS completion_info;
+  database: ""
+  deployEnabled: true
+  description: "Dynamic COPY node that reads stage configuration from control table"
+  isMultisource: false
+  locationName: SRC
+  materializationType: table
+  metadata:
+    appliedNodeTests: []
+    columns:
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: col-1
+          stepCounter: copy-dynamic-node-example
+        config: {}
+        dataType: VARIANT
+        defaultValue: ""
+        description: "Raw data from file"
+        name: SRC
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: $1
+        sysJSON: true
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: col-2
+          stepCounter: copy-dynamic-node-example
+        config: {}
+        dataType: TIMESTAMP_NTZ
+        defaultValue: ""
+        description: "Load timestamp"
+        name: LOAD_TIMESTAMP
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: current_timestamp()::timestamp_ntz
+        sysLdTs: true
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: col-3
+          stepCounter: copy-dynamic-node-example
+        config: {}
+        dataType: STRING
+        defaultValue: ""
+        description: "Source filename"
+        name: FILENAME
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: METADATA$FILENAME
+        sysFlNm: true
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: col-4
+          stepCounter: copy-dynamic-node-example
+        config: {}
+        dataType: NUMBER
+        defaultValue: ""
+        description: "File row number"
+        name: FILE_ROW_NUMBER
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: METADATA$FILE_ROW_NUMBER
+        sysFlRwNm: true
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: col-5
+          stepCounter: copy-dynamic-node-example
+        config: {}
+        dataType: TIMESTAMP_NTZ
+        defaultValue: ""
+        description: "File last modified"
+        name: FILE_LAST_MODIFIED
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: METADATA$FILE_LAST_MODIFIED
+        sysFlLtMd: true
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: col-6
+          stepCounter: copy-dynamic-node-example
+        config: {}
+        dataType: TIMESTAMP_NTZ
+        defaultValue: ""
+        description: "Scan time"
+        name: SCAN_TIME
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: METADATA$START_SCAN_TIME
+        sysFlScTm: true
+    cteString: ""
+    enabledColumnTestIDs: []
+    sourceMapping:
+      - aliases: {}
+        customSQL:
+          customSQL: ""
+        dependencies: []
+        join:
+          joinCondition: ""
+        name: COPY_NODE_DYNAMIC
+        noLinkRefs: []
+  name: COPY_NODE_DYNAMIC
+  overrideSQL: false
+  schema: ""
+  sqlType: CopyDynamic
+  type: sql
+  version: 1
+type: Node
