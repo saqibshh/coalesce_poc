@@ -22,7 +22,7 @@ operation:
     fileFormatName: ""
     fileFormatType: File Format Name
     fileNames: ""
-    filePattern: ""
+    filePattern: $FILE_PATTERN
     fileType: CSV
     forceLoad: ""
     inferschema: false
@@ -53,7 +53,7 @@ operation:
     truncateColumns: ""
     usevectscan: false
     preSQL: |
-      -- Read stage name from control table and set session variable
+      -- Read configuration from control table and set session variables
       SET STAGE_NAME = (
         SELECT stage_name 
         FROM COPY_STAGE_CONTROL 
@@ -63,7 +63,7 @@ operation:
         LIMIT 1
       );
       
-      -- Optional: Also set external URI if needed
+      -- Set external URI from control table
       SET EXTERNAL_URI = (
         SELECT external_uri 
         FROM COPY_STAGE_CONTROL 
@@ -73,7 +73,7 @@ operation:
         LIMIT 1
       );
       
-      -- Set subfolder if needed
+      -- Set subfolder from control table
       SET SUBFOLDER = (
         SELECT subfolder 
         FROM COPY_STAGE_CONTROL 
@@ -82,6 +82,23 @@ operation:
         AND environment = 'DEV'  -- Change this to match your environment
         LIMIT 1
       );
+      
+      -- Set file pattern from control table
+      SET FILE_PATTERN = (
+        SELECT file_pattern 
+        FROM COPY_STAGE_CONTROL 
+        WHERE node_name = '{{ node.name }}' 
+        AND is_active = true
+        AND environment = 'DEV'  -- Change this to match your environment
+        LIMIT 1
+      );
+      
+      -- Log the configuration being used
+      SELECT 
+        'Using stage: ' || $STAGE_NAME || 
+        ', URI: ' || $EXTERNAL_URI || 
+        ', Subfolder: ' || $SUBFOLDER ||
+        ', Pattern: ' || $FILE_PATTERN AS config_info;
   database: ""
   deployEnabled: true
   description: ""
