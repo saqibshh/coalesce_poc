@@ -1,52 +1,29 @@
 fileVersion: 1
-id: copy-node-override
-name: COPY_NODE_OVERRIDE
+id: cpy-node-fixed
+name: CPYD_NODE
 operation:
   config:
     overrideSQL: true
     customSQL: |
       -- Dynamic COPY with control table using Override SQL
       COPY INTO {{ ref_no_link(node.location.name, node.name) }}
-      FROM (
-          SELECT 
-              $1::VARIANT AS SRC,
-              current_timestamp()::timestamp_ntz AS LOAD_TIMESTAMP,
-              METADATA$FILENAME AS FILENAME,
-              METADATA$FILE_ROW_NUMBER AS FILE_ROW_NUMBER,
-              METADATA$FILE_LAST_MODIFIED AS FILE_LAST_MODIFIED,
-              METADATA$START_SCAN_TIME AS SCAN_TIME
-          FROM @(
-              SELECT stage_name 
-              FROM FUGETRON_INTERNAL_DEMO.POC_DEMO.COPY_STAGE_CONTROL 
-              WHERE node_name = '{{ node.name }}' 
-              AND environment = 'DEV' 
-              AND is_active = true
-              LIMIT 1
-          ) / (
-              SELECT subfolder 
-              FROM FUGETRON_INTERNAL_DEMO.POC_DEMO.COPY_STAGE_CONTROL 
-              WHERE node_name = '{{ node.name }}' 
-              AND environment = 'DEV' 
-              AND is_active = true
-              LIMIT 1
-          )
-      )
-      FILE_FORMAT = (
-          TYPE = 'CSV',
-          FIELD_DELIMITER = ',',
-          SKIP_HEADER = 1
-      )
-      PATTERN = (
-          SELECT file_pattern 
+      FROM @(
+          SELECT stage_name 
           FROM FUGETRON_INTERNAL_DEMO.POC_DEMO.COPY_STAGE_CONTROL 
           WHERE node_name = '{{ node.name }}' 
           AND environment = 'DEV' 
           AND is_active = true
           LIMIT 1
-      );
+      )/DC_POC/2025/08/06
+      FILE_FORMAT = (
+          TYPE = 'CSV',
+          FIELD_DELIMITER = ',',
+          SKIP_HEADER = 1
+      )
+      PATTERN = '.*\\.csv$';
   database: ""
   deployEnabled: true
-  description: "COPY node using Override SQL to bypass template issues"
+  description: "COPY node using Override SQL with dynamic stage from control table"
   isMultisource: false
   locationName: SRC
   materializationType: table
@@ -59,7 +36,7 @@ operation:
         appliedColumnTests: {}
         columnReference:
           columnCounter: col-1
-          stepCounter: copy-node-override
+          stepCounter: cpy-node-fixed
         config: {}
         dataType: VARIANT
         defaultValue: ""
@@ -76,7 +53,7 @@ operation:
         appliedColumnTests: {}
         columnReference:
           columnCounter: col-2
-          stepCounter: copy-node-override
+          stepCounter: cpy-node-fixed
         config: {}
         dataType: TIMESTAMP_NTZ
         defaultValue: ""
@@ -93,7 +70,7 @@ operation:
         appliedColumnTests: {}
         columnReference:
           columnCounter: col-3
-          stepCounter: copy-node-override
+          stepCounter: cpy-node-fixed
         config: {}
         dataType: STRING
         defaultValue: ""
@@ -110,7 +87,7 @@ operation:
         appliedColumnTests: {}
         columnReference:
           columnCounter: col-4
-          stepCounter: copy-node-override
+          stepCounter: cpy-node-fixed
         config: {}
         dataType: NUMBER
         defaultValue: ""
@@ -127,7 +104,7 @@ operation:
         appliedColumnTests: {}
         columnReference:
           columnCounter: col-5
-          stepCounter: copy-node-override
+          stepCounter: cpy-node-fixed
         config: {}
         dataType: TIMESTAMP_NTZ
         defaultValue: ""
@@ -144,7 +121,7 @@ operation:
         appliedColumnTests: {}
         columnReference:
           columnCounter: col-6
-          stepCounter: copy-node-override
+          stepCounter: cpy-node-fixed
         config: {}
         dataType: TIMESTAMP_NTZ
         defaultValue: ""
@@ -164,9 +141,9 @@ operation:
         dependencies: []
         join:
           joinCondition: ""
-        name: COPY_NODE_OVERRIDE
+        name: CPYD_NODE
         noLinkRefs: []
-  name: COPY_NODE_OVERRIDE
+  name: CPYD_NODE
   overrideSQL: true
   schema: ""
   sqlType: CopyDynamic
