@@ -14,7 +14,7 @@ operation:
     errornumber: ""
     escapeenclosed: \134
     escapeval: ""
-    externalURI: Enter external URI-Ex:s3://snowflake-docs
+    externalURI: $EXTERNAL_URI
     extlocation: false
     fieldDelim: ","
     fieldEnclosed: \042
@@ -45,7 +45,7 @@ operation:
     stageStorageLocationName: Enter Storage Location name
     storageintegration: ""
     stripouterarray: true
-    subfolder: Enter folder name in stage if applicable-folder/subfolder
+    subfolder: $SUBFOLDER
     timeformat: ""
     timestampformat: ""
     trimSpace: false
@@ -56,9 +56,31 @@ operation:
       -- Read stage name from control table and set session variable
       SET STAGE_NAME = (
         SELECT stage_name 
-        FROM your_control_table 
-        WHERE table_name = '{{ node.name }}' 
+        FROM COPY_STAGE_CONTROL 
+        WHERE node_name = '{{ node.name }}' 
         AND is_active = true
+        AND environment = 'DEV'  -- Change this to match your environment
+        LIMIT 1
+      );
+      
+      -- Optional: Also set external URI if needed
+      SET EXTERNAL_URI = (
+        SELECT external_uri 
+        FROM COPY_STAGE_CONTROL 
+        WHERE node_name = '{{ node.name }}' 
+        AND is_active = true
+        AND environment = 'DEV'  -- Change this to match your environment
+        LIMIT 1
+      );
+      
+      -- Set subfolder if needed
+      SET SUBFOLDER = (
+        SELECT subfolder 
+        FROM COPY_STAGE_CONTROL 
+        WHERE node_name = '{{ node.name }}' 
+        AND is_active = true
+        AND environment = 'DEV'  -- Change this to match your environment
+        LIMIT 1
       );
   database: ""
   deployEnabled: true
