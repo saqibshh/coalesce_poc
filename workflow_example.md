@@ -29,20 +29,20 @@ Your `SRC-COPY_NODE.yml` is now configured to:
 
 When your COPY node runs:
 
-1. **Pre-SQL executes first** and sets session variables:
-   ```sql
-   SET STAGE_NAME = (SELECT stage_name FROM COPY_STAGE_CONTROL WHERE node_name = 'COPY_NODE' AND environment = 'DEV');
-   SET EXTERNAL_URI = (SELECT external_uri FROM COPY_STAGE_CONTROL WHERE node_name = 'COPY_NODE' AND environment = 'DEV');
-   SET SUBFOLDER = (SELECT subfolder FROM COPY_STAGE_CONTROL WHERE node_name = 'COPY_NODE' AND environment = 'DEV');
-   SET FILE_PATTERN = (SELECT file_pattern FROM COPY_STAGE_CONTROL WHERE node_name = 'COPY_NODE' AND environment = 'DEV');
+1. **Configuration fields contain direct SQL queries**:
+   ```yaml
+   stageName: (SELECT stage_name FROM COPY_STAGE_CONTROL WHERE node_name = 'COPY_NODE' AND is_active = true AND environment = 'DEV' LIMIT 1)
+   externalURI: (SELECT external_uri FROM COPY_STAGE_CONTROL WHERE node_name = 'COPY_NODE' AND is_active = true AND environment = 'DEV' LIMIT 1)
+   subfolder: (SELECT subfolder FROM COPY_STAGE_CONTROL WHERE node_name = 'COPY_NODE' AND is_active = true AND environment = 'DEV' LIMIT 1)
+   filePattern: (SELECT file_pattern FROM COPY_STAGE_CONTROL WHERE node_name = 'COPY_NODE' AND is_active = true AND environment = 'DEV' LIMIT 1)
    ```
 
-2. **Custom COPY template uses these variables**:
-   The external-data-package template (node type 324) will use the session variables:
-   - `$STAGE_NAME` for the stage name
-   - `$EXTERNAL_URI` for the external URI
-   - `$SUBFOLDER` for the subfolder path
-   - `$FILE_PATTERN` for file pattern matching
+2. **Custom COPY template executes these queries**:
+   The external-data-package template (node type 324) will execute the SQL queries directly:
+   - Stage name is resolved from the control table
+   - External URI is resolved from the control table
+   - Subfolder is resolved from the control table
+   - File pattern is resolved from the control table
 
 ### 5. Environment Switching
 

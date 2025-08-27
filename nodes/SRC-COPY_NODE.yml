@@ -14,7 +14,7 @@ operation:
     errornumber: ""
     escapeenclosed: \134
     escapeval: ""
-    externalURI: $EXTERNAL_URI
+    externalURI: s3://my-bucket/data/
     extlocation: false
     fieldDelim: ","
     fieldEnclosed: \042
@@ -22,7 +22,7 @@ operation:
     fileFormatName: ""
     fileFormatType: File Format Name
     fileNames: ""
-    filePattern: $FILE_PATTERN
+    filePattern: .*\.csv$
     fileType: CSV
     forceLoad: ""
     inferschema: false
@@ -41,11 +41,11 @@ operation:
     sizeLimit: ""
     skipBlankLines: false
     skipHeader: "1"
-    stageName: $STAGE_NAME
+    stageName: MY_STAGE
     stageStorageLocationName: Enter Storage Location name
     storageintegration: ""
     stripouterarray: true
-    subfolder: $SUBFOLDER
+    subfolder: daily/
     timeformat: ""
     timestampformat: ""
     trimSpace: false
@@ -53,52 +53,14 @@ operation:
     truncateColumns: ""
     usevectscan: false
     preSQL: |
-      -- Read configuration from control table and set session variables
-      SET STAGE_NAME = (
-        SELECT stage_name 
-        FROM COPY_STAGE_CONTROL 
-        WHERE node_name = '{{ node.name }}' 
-        AND is_active = true
-        AND environment = 'DEV'  -- Change this to match your environment
-        LIMIT 1
-      );
+      -- Set environment variable (you can change this to switch environments)
+      SET ENV = 'DEV';
       
-      -- Set external URI from control table
-      SET EXTERNAL_URI = (
-        SELECT external_uri 
-        FROM COPY_STAGE_CONTROL 
-        WHERE node_name = '{{ node.name }}' 
-        AND is_active = true
-        AND environment = 'DEV'  -- Change this to match your environment
-        LIMIT 1
-      );
-      
-      -- Set subfolder from control table
-      SET SUBFOLDER = (
-        SELECT subfolder 
-        FROM COPY_STAGE_CONTROL 
-        WHERE node_name = '{{ node.name }}' 
-        AND is_active = true
-        AND environment = 'DEV'  -- Change this to match your environment
-        LIMIT 1
-      );
-      
-      -- Set file pattern from control table
-      SET FILE_PATTERN = (
-        SELECT file_pattern 
-        FROM COPY_STAGE_CONTROL 
-        WHERE node_name = '{{ node.name }}' 
-        AND is_active = true
-        AND environment = 'DEV'  -- Change this to match your environment
-        LIMIT 1
-      );
-      
-      -- Log the configuration being used
+      -- Get configuration from control table and log it
       SELECT 
-        'Using stage: ' || $STAGE_NAME || 
-        ', URI: ' || $EXTERNAL_URI || 
-        ', Subfolder: ' || $SUBFOLDER ||
-        ', Pattern: ' || $FILE_PATTERN AS config_info;
+        'Environment: ' || $ENV || 
+        ', Stage: ' || (SELECT stage_name FROM COPY_STAGE_CONTROL WHERE node_name = '{{ node.name }}' AND environment = $ENV AND is_active = true LIMIT 1) ||
+        ', URI: ' || (SELECT external_uri FROM COPY_STAGE_CONTROL WHERE node_name = '{{ node.name }}' AND environment = $ENV AND is_active = true LIMIT 1) AS config_info;
   database: ""
   deployEnabled: true
   description: ""
