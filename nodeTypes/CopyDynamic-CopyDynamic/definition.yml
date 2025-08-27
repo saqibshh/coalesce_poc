@@ -77,7 +77,7 @@ metadata:
       - displayName: File Pattern
         attributeName: filePattern
         type: textBox
-        default: ".*\.csv$"
+        default: ".*\\.csv$"
         isRequired: true
         description: "Regex pattern for file matching"
 

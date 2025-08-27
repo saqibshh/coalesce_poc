@@ -10,7 +10,7 @@ operation:
     fieldDelim: ","
     skipHeader: "1"
     subfolder: "DC_POC/2025/08/06"
-    filePattern: ".*\.csv$"
+    filePattern: ".*\\.csv$"
     testsEnabled: true
     preSQL: |
       -- Log the configuration being used
