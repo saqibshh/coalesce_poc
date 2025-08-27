@@ -105,29 +105,5 @@ metadata:
       placement: end
       attributeName: isSystemLoadTimestamp
 
-    - displayName: FILENAME
-      transform: METADATA$FILENAME
-      dataType: STRING
-      placement: end
-      attributeName: isSystemFilename
-
-    - displayName: FILE_ROW_NUMBER
-      transform: METADATA$FILE_ROW_NUMBER
-      dataType: NUMBER
-      placement: end
-      attributeName: isSystemFileRowNumber
-
-    - displayName: FILE_LAST_MODIFIED
-      transform: METADATA$FILE_LAST_MODIFIED
-      dataType: TIMESTAMP_NTZ
-      placement: end
-      attributeName: isSystemFileLastModified
-
-    - displayName: SCAN_TIME
-      transform: METADATA$START_SCAN_TIME
-      dataType: TIMESTAMP_NTZ
-      placement: end
-      attributeName: isSystemScanTime
-
 name: CopyDynamic
 type: NodeType
