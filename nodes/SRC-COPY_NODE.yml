@@ -41,7 +41,7 @@ operation:
     sizeLimit: ""
     skipBlankLines: false
     skipHeader: "1"
-    stageName: Enter stage name-stage_name
+    stageName: $STAGE_NAME
     stageStorageLocationName: Enter Storage Location name
     storageintegration: ""
     stripouterarray: true
@@ -52,6 +52,14 @@ operation:
     truncateBefore: false
     truncateColumns: ""
     usevectscan: false
+    preSQL: |
+      -- Read stage name from control table and set session variable
+      SET STAGE_NAME = (
+        SELECT stage_name 
+        FROM your_control_table 
+        WHERE table_name = '{{ node.name }}' 
+        AND is_active = true
+      );
   database: ""
   deployEnabled: true
   description: ""
