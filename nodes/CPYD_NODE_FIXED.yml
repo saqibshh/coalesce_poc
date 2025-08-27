@@ -146,7 +146,7 @@ operation:
   name: CPYD_NODE
   overrideSQL: true
   schema: ""
-  sqlType: CopyDynamic
+  sqlType: sql
   type: sql
   version: 1
 type: Node
