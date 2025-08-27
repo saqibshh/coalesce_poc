@@ -1,84 +1,56 @@
-{% for test in node.tests if config.testsEnabled %}
-    {% if test.runOrder == 'Before' %}
-        {{ test_stage(test.name, test.continueOnFailure) }}
-        {{ test.templateString }}
-    {% endif %}
-{% endfor %}
+-- Dynamic COPY template reading from control table
+{% set control_table = config.controlTableSchema + '.' + config.controlTableName %}
 
-{% if node.materializationType == 'table' %}
-    {% if config.preSQL %}
-        {{ stage('Pre-SQL') }}
-        {{ config.preSQL }}
-    {% endif %}
+{% if config.preSQL %}
+-- Pre-SQL execution
+{{ config.preSQL }}
+{% endif %}
 
-    {{ stage('Dynamic COPY Configuration') }}
-    
-    -- Set control table reference
-    {% set control_table = config.controlTableSchema + '.' + config.controlTableName %}
-
-    {{ stage('COPY INTO ' + node.name) }}
-    
-    COPY INTO {{ ref_no_link(node.location.name, node.name) }}
-    FROM (
-        SELECT 
-            $1::VARIANT AS SRC,
-            current_timestamp()::timestamp_ntz AS LOAD_TIMESTAMP,
-            METADATA$FILENAME AS FILENAME,
-            METADATA$FILE_ROW_NUMBER AS FILE_ROW_NUMBER,
-            METADATA$FILE_LAST_MODIFIED AS FILE_LAST_MODIFIED,
-            METADATA$START_SCAN_TIME AS SCAN_TIME
-        FROM @(
-            SELECT stage_name 
-            FROM {{ control_table }} 
-            WHERE node_name = '{{ node.name }}' 
-            AND environment = '{{ config.environment }}' 
-            AND is_active = true
-            LIMIT 1
-        ) / (
-            SELECT subfolder 
-            FROM {{ control_table }} 
-            WHERE node_name = '{{ node.name }}' 
-            AND environment = '{{ config.environment }}' 
-            AND is_active = true
-            LIMIT 1
-        )
-    )
-    FILE_FORMAT = (
-        TYPE = '{{ config.fileType }}'
-        {% if config.fieldDelim %}
-            FIELD_DELIMITER = '{{ config.fieldDelim }}'
-        {% endif %}
-        {% if config.skipHeader %}
-            SKIP_HEADER = {{ config.skipHeader }}
-        {% endif %}
-    )
-    PATTERN = (
-        SELECT file_pattern 
+-- Dynamic COPY operation
+COPY INTO {{ ref_no_link(node.location.name, node.name) }}
+FROM (
+    SELECT 
+        $1::VARIANT AS SRC,
+        current_timestamp()::timestamp_ntz AS LOAD_TIMESTAMP,
+        METADATA$FILENAME AS FILENAME,
+        METADATA$FILE_ROW_NUMBER AS FILE_ROW_NUMBER,
+        METADATA$FILE_LAST_MODIFIED AS FILE_LAST_MODIFIED,
+        METADATA$START_SCAN_TIME AS SCAN_TIME
+    FROM @(
+        SELECT stage_name 
         FROM {{ control_table }} 
         WHERE node_name = '{{ node.name }}' 
         AND environment = '{{ config.environment }}' 
         AND is_active = true
         LIMIT 1
-    );
-
-    {% if config.postSQL %}
-        {{ stage('Post-SQL') }}
-        {{ config.postSQL }}
+    ) / (
+        SELECT subfolder 
+        FROM {{ control_table }} 
+        WHERE node_name = '{{ node.name }}' 
+        AND environment = '{{ config.environment }}' 
+        AND is_active = true
+        LIMIT 1
+    )
+)
+FILE_FORMAT = (
+    TYPE = '{{ config.fileType }}'
+    {% if config.fieldDelim %}
+    FIELD_DELIMITER = '{{ config.fieldDelim }}'
     {% endif %}
-{% endif %}
+    {% if config.skipHeader %}
+    SKIP_HEADER = {{ config.skipHeader }}
+    {% endif %}
+)
+PATTERN = (
+    SELECT file_pattern 
+    FROM {{ control_table }} 
+    WHERE node_name = '{{ node.name }}' 
+    AND environment = '{{ config.environment }}' 
+    AND is_active = true
+    LIMIT 1
+);
 
-{% if config.testsEnabled %}
-    {% for test in node.tests %}
-        {% if test.runOrder == 'After' %}
-            {{ test_stage(test.name, test.continueOnFailure) }}
-            {{ test.templateString }}
-        {% endif %}
-    {% endfor %}
-
-    {% for column in columns %}
-        {% for test in column.tests %}
-            {{ test_stage(column.name + ": " + test.name) }}
-            {{ test.templateString }}
-        {% endfor %}
-    {% endfor %}
+{% if config.postSQL %}
+-- Post-SQL execution
+{{ config.postSQL }}
 {% endif %}

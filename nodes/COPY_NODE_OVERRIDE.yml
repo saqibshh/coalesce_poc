@@ -1,0 +1,175 @@
+fileVersion: 1
+id: copy-node-override
+name: COPY_NODE_OVERRIDE
+operation:
+  config:
+    overrideSQL: true
+    customSQL: |
+      -- Dynamic COPY with control table using Override SQL
+      COPY INTO {{ ref_no_link(node.location.name, node.name) }}
+      FROM (
+          SELECT 
+              $1::VARIANT AS SRC,
+              current_timestamp()::timestamp_ntz AS LOAD_TIMESTAMP,
+              METADATA$FILENAME AS FILENAME,
+              METADATA$FILE_ROW_NUMBER AS FILE_ROW_NUMBER,
+              METADATA$FILE_LAST_MODIFIED AS FILE_LAST_MODIFIED,
+              METADATA$START_SCAN_TIME AS SCAN_TIME
+          FROM @(
+              SELECT stage_name 
+              FROM FUGETRON_INTERNAL_DEMO.POC_DEMO.COPY_STAGE_CONTROL 
+              WHERE node_name = '{{ node.name }}' 
+              AND environment = 'DEV' 
+              AND is_active = true
+              LIMIT 1
+          ) / (
+              SELECT subfolder 
+              FROM FUGETRON_INTERNAL_DEMO.POC_DEMO.COPY_STAGE_CONTROL 
+              WHERE node_name = '{{ node.name }}' 
+              AND environment = 'DEV' 
+              AND is_active = true
+              LIMIT 1
+          )
+      )
+      FILE_FORMAT = (
+          TYPE = 'CSV',
+          FIELD_DELIMITER = ',',
+          SKIP_HEADER = 1
+      )
+      PATTERN = (
+          SELECT file_pattern 
+          FROM FUGETRON_INTERNAL_DEMO.POC_DEMO.COPY_STAGE_CONTROL 
+          WHERE node_name = '{{ node.name }}' 
+          AND environment = 'DEV' 
+          AND is_active = true
+          LIMIT 1
+      );
+  database: ""
+  deployEnabled: true
+  description: "COPY node using Override SQL to bypass template issues"
+  isMultisource: false
+  locationName: SRC
+  materializationType: table
+  metadata:
+    appliedNodeTests: []
+    columns:
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: col-1
+          stepCounter: copy-node-override
+        config: {}
+        dataType: VARIANT
+        defaultValue: ""
+        description: "Raw data from file"
+        name: SRC
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: $1
+        sysJSON: true
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: col-2
+          stepCounter: copy-node-override
+        config: {}
+        dataType: TIMESTAMP_NTZ
+        defaultValue: ""
+        description: "Load timestamp"
+        name: LOAD_TIMESTAMP
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: current_timestamp()::timestamp_ntz
+        sysLdTs: true
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: col-3
+          stepCounter: copy-node-override
+        config: {}
+        dataType: STRING
+        defaultValue: ""
+        description: "Source filename"
+        name: FILENAME
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: METADATA$FILENAME
+        sysFlNm: true
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: col-4
+          stepCounter: copy-node-override
+        config: {}
+        dataType: NUMBER
+        defaultValue: ""
+        description: "File row number"
+        name: FILE_ROW_NUMBER
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: METADATA$FILE_ROW_NUMBER
+        sysFlRwNm: true
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: col-5
+          stepCounter: copy-node-override
+        config: {}
+        dataType: TIMESTAMP_NTZ
+        defaultValue: ""
+        description: "File last modified"
+        name: FILE_LAST_MODIFIED
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: METADATA$FILE_LAST_MODIFIED
+        sysFlLtMd: true
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: col-6
+          stepCounter: copy-node-override
+        config: {}
+        dataType: TIMESTAMP_NTZ
+        defaultValue: ""
+        description: "Scan time"
+        name: SCAN_TIME
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: METADATA$START_SCAN_TIME
+        sysFlScTm: true
+    cteString: ""
+    enabledColumnTestIDs: []
+    sourceMapping:
+      - aliases: {}
+        customSQL:
+          customSQL: ""
+        dependencies: []
+        join:
+          joinCondition: ""
+        name: COPY_NODE_OVERRIDE
+        noLinkRefs: []
+  name: COPY_NODE_OVERRIDE
+  overrideSQL: true
+  schema: ""
+  sqlType: CopyDynamic
+  type: sql
+  version: 1
+type: Node
