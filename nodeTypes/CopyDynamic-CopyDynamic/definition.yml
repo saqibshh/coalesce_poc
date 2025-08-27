@@ -1,12 +1,12 @@
 fileVersion: 1
-id: CopyDynamic
+id: CopyCustom
 isDisabled: false
 metadata:
   defaultStorageLocation: null
   error: null
   nodeMetadataSpec: |
     capitalized: Copy Dynamic
-    short: CPYD
+    short: COPY_CUSTOM
     plural: Copy Dynamics
     tagColor: '#FF6B35'
 
@@ -97,13 +97,5 @@ metadata:
         type: textBox
         syntax: sql
         isRequired: false
-
-    systemColumns:
-    - displayName: LOAD_TIMESTAMP
-      transform: current_timestamp()::timestamp_ntz
-      dataType: TIMESTAMP_NTZ
-      placement: end
-      attributeName: isSystemLoadTimestamp
-
-name: CopyDynamic
+name: CopyCustom
 type: NodeType

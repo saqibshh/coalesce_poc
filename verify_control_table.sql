@@ -34,7 +34,7 @@ SELECT
     environment,
     is_active
 FROM FUGETRON_INTERNAL_DEMO.POC_DEMO.COPY_STAGE_CONTROL 
-WHERE node_name = 'CPYD_NODE' 
+WHERE node_name = 'COPY_CUSTOM' 
 AND environment = 'DEV' 
 AND is_active = true;
 
@@ -42,7 +42,7 @@ AND is_active = true;
 SELECT 'Testing the exact query from the node:' AS step;
 SELECT stage_name 
 FROM FUGETRON_INTERNAL_DEMO.POC_DEMO.COPY_STAGE_CONTROL 
-WHERE node_name = 'CPYD_NODE' 
+WHERE node_name = 'COPY_CUSTOM' 
 AND environment = 'DEV' 
 AND is_active = true
 LIMIT 1;
