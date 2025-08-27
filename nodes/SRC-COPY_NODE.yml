@@ -41,11 +41,11 @@ operation:
     sizeLimit: ""
     skipBlankLines: false
     skipHeader: "1"
-    stageName: MY_STAGE
+    stageName: :my_stage
     stageStorageLocationName: Enter Storage Location name
     storageintegration: ""
     stripouterarray: true
-    subfolder: daily/
+    subfolder: DC_POC/2025/08/06
     timeformat: ""
     timestampformat: ""
     trimSpace: false
@@ -53,14 +53,13 @@ operation:
     truncateColumns: ""
     usevectscan: false
     preSQL: |
-      -- Set environment variable (you can change this to switch environments)
-      SET ENV = 'DEV';
-      
-      -- Get configuration from control table and log it
-      SELECT 
-        'Environment: ' || $ENV || 
-        ', Stage: ' || (SELECT stage_name FROM COPY_STAGE_CONTROL WHERE node_name = '{{ node.name }}' AND environment = $ENV AND is_active = true LIMIT 1) ||
-        ', URI: ' || (SELECT external_uri FROM COPY_STAGE_CONTROL WHERE node_name = '{{ node.name }}' AND environment = $ENV AND is_active = true LIMIT 1) AS config_info;
+      DECLARE my_stage STRING;
+
+      -- 2. Fetch the stage path from your control table
+      SELECT stage_name
+      INTO :my_stage
+      FROM FUGETRON_INTERNAL_DEMO.POC_DEMO.COPY_STAGE_CONTROL
+      WHERE active = True;
   database: ""
   deployEnabled: true
   description: ""
