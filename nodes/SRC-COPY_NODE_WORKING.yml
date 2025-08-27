@@ -1,0 +1,172 @@
+fileVersion: 1
+id: src-copy-node-working
+name: SRC-COPY_NODE
+operation:
+  config:
+    stageName: $STAGE_NAME
+    externalURI: $EXTERNAL_URI
+    subfolder: $SUBFOLDER
+    filePattern: $FILE_PATTERN
+    preSQL: |
+      -- Read from control table and set session variables
+      SET STAGE_NAME = (
+        SELECT stage_name 
+        FROM FUGETRON_INTERNAL_DEMO.POC_DEMO.COPY_STAGE_CONTROL 
+        WHERE node_name = 'SRC-COPY_NODE' 
+        AND environment = 'DEV' 
+        AND is_active = true
+        LIMIT 1
+      );
+      SET EXTERNAL_URI = (
+        SELECT external_uri 
+        FROM FUGETRON_INTERNAL_DEMO.POC_DEMO.COPY_STAGE_CONTROL 
+        WHERE node_name = 'SRC-COPY_NODE' 
+        AND environment = 'DEV' 
+        AND is_active = true
+        LIMIT 1
+      );
+      SET SUBFOLDER = (
+        SELECT subfolder 
+        FROM FUGETRON_INTERNAL_DEMO.POC_DEMO.COPY_STAGE_CONTROL 
+        WHERE node_name = 'SRC-COPY_NODE' 
+        AND environment = 'DEV' 
+        AND is_active = true
+        LIMIT 1
+      );
+      SET FILE_PATTERN = (
+        SELECT file_pattern 
+        FROM FUGETRON_INTERNAL_DEMO.POC_DEMO.COPY_STAGE_CONTROL 
+        WHERE node_name = 'SRC-COPY_NODE' 
+        AND environment = 'DEV' 
+        AND is_active = true
+        LIMIT 1
+      );
+  database: ""
+  deployEnabled: true
+  description: "COPY node using original data package with dynamic stage from control table"
+  isMultisource: false
+  locationName: SRC
+  materializationType: table
+  metadata:
+    appliedNodeTests: []
+    columns:
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: col-1
+          stepCounter: src-copy-node-working
+        config: {}
+        dataType: VARIANT
+        defaultValue: ""
+        description: "Raw data from file"
+        name: SRC
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: $1
+        sysJSON: true
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: col-2
+          stepCounter: src-copy-node-working
+        config: {}
+        dataType: TIMESTAMP_NTZ
+        defaultValue: ""
+        description: "Load timestamp"
+        name: LOAD_TIMESTAMP
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: current_timestamp()::timestamp_ntz
+        sysLdTs: true
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: col-3
+          stepCounter: src-copy-node-working
+        config: {}
+        dataType: STRING
+        defaultValue: ""
+        description: "Source filename"
+        name: FILENAME
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: METADATA$FILENAME
+        sysFlNm: true
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: col-4
+          stepCounter: src-copy-node-working
+        config: {}
+        dataType: NUMBER
+        defaultValue: ""
+        description: "File row number"
+        name: FILE_ROW_NUMBER
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: METADATA$FILE_ROW_NUMBER
+        sysFlRwNm: true
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: col-5
+          stepCounter: src-copy-node-working
+        config: {}
+        dataType: TIMESTAMP_NTZ
+        defaultValue: ""
+        description: "File last modified"
+        name: FILE_LAST_MODIFIED
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: METADATA$FILE_LAST_MODIFIED
+        sysFlLtMd: true
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: col-6
+          stepCounter: src-copy-node-working
+        config: {}
+        dataType: TIMESTAMP_NTZ
+        defaultValue: ""
+        description: "Scan time"
+        name: SCAN_TIME
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: METADATA$START_SCAN_TIME
+        sysFlScTm: true
+    cteString: ""
+    enabledColumnTestIDs: []
+    sourceMapping:
+      - aliases: {}
+        customSQL:
+          customSQL: ""
+        dependencies: []
+        join:
+          joinCondition: ""
+        name: SRC-COPY_NODE
+        noLinkRefs: []
+  name: SRC-COPY_NODE
+  overrideSQL: false
+  schema: ""
+  sqlType: test-pkg:::324
+  type: sql
+  version: 1
+type: Node
