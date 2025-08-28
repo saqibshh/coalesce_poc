@@ -2,7 +2,7 @@ capitalized: COPY INTO WITH FULL LOAD OPTION
 short: 'COPY'
 tagColor: '#6ca37b'
 isDisabled: false
-plural: Copy Into
+plural: Copy Into Custom
 
 deployStrategy: advanced
 isColumnResyncEnabled: true
