@@ -35,14 +35,14 @@ config:
   - displayName: Coalesce Location of Control Table
     attributeName: controlTableLoc
     type: textBox
-    default: ""
-    isRequired: false
+    default: "public"
+    isRequired: true
 
   - displayName: Control Table Name
     attributeName: controlTableName
     type: textBox
-    default: ""
-    isRequired: false
+    default: "COPY_STAGE_CONTROL"
+    isRequired: true
 
 - groupName: Source Data
   items:
