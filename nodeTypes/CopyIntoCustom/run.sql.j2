@@ -1,6 +1,8 @@
 # Control Table
-{% set controlTableLocationName = config.controlTableLoc %}\
+{% if config.controlTableLoc and config.controlTableName %}
+{% set controlTableLocationName = config.controlTableLoc %}
 {% set controlTableName = config.controlTableName %}
+{% endif %}
 
 # Storage Location-database and schema
 
@@ -9,8 +11,10 @@
 {% set sch = storageLocations | selectattr('name', 'equalto', srcSchName) | map(attribute='schema') | first %}
 
 # Control Table Location
+{% if config.controlTableLoc and config.controlTableName %}
 {% set controlTableDb = storageLocations | selectattr('name', 'equalto', controlTableLocationName) | map(attribute='database') | first %}
 {% set controlTableSch = storageLocations | selectattr('name', 'equalto', controlTableLocationName) | map(attribute='schema') | first %}
+{% endif %}
 
 # Internal or External Stage locations
 
@@ -113,7 +117,7 @@
             {%- if not loop.last -%}, {% endif %}
             {%- endfor %}
 
-           FROM '@"{{ dbStage }}"."{{ schStage }}".' || (SELECT stage_name FROM "{{ controlTableDb }}"."{{ controlTableSch }}"."{{ controlTableName }}" WHERE node_name = '{{ node.name }}' AND is_active = TRUE LIMIT 1) || '{{subf}}') 
+           FROM '@"{{ dbStage }}"."{{ schStage }}".{% if config.controlTableLoc and config.controlTableName %}' || (SELECT stage_name FROM "{{ controlTableDb }}"."{{ controlTableSch }}"."{{ controlTableName }}" WHERE node_name = '{{ node.name }}' AND is_active = TRUE LIMIT 1) || '{{subf}}'{% else %}{{ config.stageName }}{{subf}}{% endif %}') 
            {{fileNameSQL}}
            {{ filePatternSQL }}
 

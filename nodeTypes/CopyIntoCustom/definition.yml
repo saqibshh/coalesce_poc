@@ -36,13 +36,13 @@ config:
     attributeName: controlTableLoc
     type: textBox
     default: ""
-    isRequired: true
+    isRequired: false
 
   - displayName: Control Table Name
     attributeName: controlTableName
     type: textBox
     default: ""
-    isRequired: true
+    isRequired: false
 
 - groupName: Source Data
   items:

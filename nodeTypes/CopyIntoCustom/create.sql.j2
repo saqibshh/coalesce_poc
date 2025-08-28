@@ -42,10 +42,12 @@
                            {% set sch = ref_no_link(desiredState.node.location.name, desiredState.node.name).split('.')[1]%}
 
                            # Control Table Location
+                           {% if desiredState.config.controlTableLoc and desiredState.config.controlTableName %}
                            {% set controlTableLocationName = desiredState.config.controlTableLoc %}
                            {% set controlTableName = desiredState.config.controlTableName %}
                            {% set controlTableDb = desiredState.storageLocations | selectattr('name', 'equalto', controlTableLocationName) | map(attribute='database') | first %}
                            {% set controlTableSch = desiredState.storageLocations | selectattr('name', 'equalto', controlTableLocationName) | map(attribute='schema') | first %}
+                           {% endif %}
 
                            {% set stageStorageLocationName = desiredState.config.stageStorageLocationName %}
                            {% set dbStage =  ref_no_link(desiredState.config.stageStorageLocationName, desiredState.node.name).split('.')[0] %}
@@ -159,7 +161,7 @@
                        USING TEMPLATE (SELECT ARRAY_AGG(OBJECT_CONSTRUCT(*))
                       FROM TABLE(
                         INFER_SCHEMA(
-                          LOCATION=>''@{{ dbStage }}.{{ schStage }}.'' || (SELECT stage_name FROM "{{ controlTableDb }}"."{{ controlTableSch }}"."{{ controlTableName }}" WHERE node_name = ''{{desiredState.node.name}}'' AND is_active = TRUE LIMIT 1) || ''{{subf}}'',
+                          LOCATION=>''@{{ dbStage }}.{{ schStage }}.{% if desiredState.config.controlTableLoc and desiredState.config.controlTableName %}'' || (SELECT stage_name FROM "{{ controlTableDb }}"."{{ controlTableSch }}"."{{ controlTableName }}" WHERE node_name = ''{{desiredState.node.name}}'' AND is_active = TRUE LIMIT 1) || ''{{subf}}''{% else %}{{ desiredState.config.stageName }}{{subf}}{% endif %}'',
                           {{fileNameSQL }}
                           FILE_FORMAT=>''"{{ dbff }}"."{{ schff }}"."TEMP_{{ desiredState.config.fileType}}_{{desiredState.node.name}}"''
                         )
@@ -169,7 +171,7 @@
                        USING TEMPLATE (SELECT ARRAY_AGG(OBJECT_CONSTRUCT(*))
                       FROM TABLE(
                         INFER_SCHEMA(
-                          LOCATION=>''@{{ dbStage }}.{{ schStage }}.'' || (SELECT stage_name FROM "{{ controlTableDb }}"."{{ controlTableSch }}"."{{ controlTableName }}" WHERE node_name = ''{{desiredState.node.name}}'' AND is_active = TRUE LIMIT 1) || ''{{subf}}'',
+                          LOCATION=>''@{{ dbStage }}.{{ schStage }}.{% if desiredState.config.controlTableLoc and desiredState.config.controlTableName %}'' || (SELECT stage_name FROM "{{ controlTableDb }}"."{{ controlTableSch }}"."{{ controlTableName }}" WHERE node_name = ''{{desiredState.node.name}}'' AND is_active = TRUE LIMIT 1) || ''{{subf}}''{% else %}{{ desiredState.config.stageName }}{{subf}}{% endif %}'',
                           {{fileNameSQL }}
                           FILE_FORMAT=>''"{{ dbff }}"."{{ schff }}"."{{ desiredState.config.fileFormatName}}"''
                         )
