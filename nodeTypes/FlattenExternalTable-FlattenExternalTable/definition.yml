@@ -32,22 +32,13 @@ metadata:
         default: false
         enableIf: "{%if config.materializationType == 'view' %} false {%else%} true {%endif%}"
 
-    - groupName: Source Configuration
-      items:
-      
       - type: label
         attributeName: note1
         displayName: 
                        "NOTE:
                        \n
-                       This node flattens VARIANT fields from external tables
+                       This node flattens VARIANT fields from upstream external table
                        into proper columns with inferred data types"
-      
-      - displayName: Source External Table
-        attributeName: sourceExternalTable
-        type: textBox
-        default: 'Enter fully qualified external table name (database.schema.table)'
-        isRequired: true
 
       - displayName: Variant Column Name
         attributeName: variantColumnName

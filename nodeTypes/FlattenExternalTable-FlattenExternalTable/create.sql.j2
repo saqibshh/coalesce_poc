@@ -15,11 +15,10 @@ does not permit copying or modification for any other purpose.
 {% set db = storageLocations | selectattr('name', 'equalto', srcSchName) | map(attribute='database') | first %}
 {% set sch = storageLocations | selectattr('name', 'equalto', srcSchName) | map(attribute='schema') | first %}
 
-{# Parse source external table #}
-{% set sourceTableParts = config.sourceExternalTable.split('.') %}
-{% set sourceDb = sourceTableParts[0] %}
-{% set sourceSch = sourceTableParts[1] %}
-{% set sourceTable = sourceTableParts[2] %}
+{# Use upstream source (external table) #}
+{% set sourceDb = sources[0].location.database %}
+{% set sourceSch = sources[0].location.schema %}
+{% set sourceTable = sources[0].name %}
 
 {# Create the target table/view based on materialization type #}
 {% if config.materializationType == 'view' %}
