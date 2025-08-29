@@ -1,0 +1,492 @@
+fileVersion: 1
+id: "14"
+isDisabled: false
+metadata:
+  defaultStorageLocation: null
+  error: null
+  nodeMetadataSpec: |
+    capitalized: COPY INTO WITH FULL LOAD OPTION
+    short: 'COPY INTO C'
+    tagColor: '#6ca37b'
+    isDisabled: false
+    plural: Copy Into C
+
+    deployStrategy: advanced
+    isColumnResyncEnabled: true
+
+    config:
+    - groupName: General Options
+      items:
+     
+      - type: materializationSelector
+        default: table
+        options:
+        - table
+        - transient table
+        isRequired: true 
+      
+      - displayName: Truncate Before
+        attributeName: truncateBefore
+        type: toggleButton
+        default: false
+        enableIf: "{%if config.inferschema %} false {%else%} true {%endif%}"
+
+      - displayName: InferSchema
+        attributeName: inferschema
+        type: toggleButton
+        default: false
+
+    - groupName: Source Data
+      items:
+      
+      - type: label
+        attributeName: note2
+        displayName: 
+                       "NOTE:
+                       \n
+                       Ensure the parameter loadType is added in Workspace and 
+                       deployment environment if you intend to reload data from source files
+                       Refer documentation for more info"
+        enableIf: "{%- if parameters == {} -%} true {%- else -%} false {%- endif -%}"
+
+      - displayName: Internal or External Stage
+        attributeName: intextstage
+        type: toggleButton
+        isRequired: false 
+        enableIf: "{% if config.extlocation or config.inferschema %} false {% else %} true {% endif %}"    	
+    	
+      - displayName: External location
+        attributeName: extlocation
+        type: toggleButton
+        isRequired: false  
+        enableIf: "{% if config.intextstage or config.inferschema %} false {% else %} true {% endif %}"
+    	  
+      - displayName: Coalesce Storage Location of Stage
+        attributeName: stageStorageLocationName
+        type: textBox
+        default: 'Enter Storage Location name'
+        enableIf: "{% if config.intextstage or config.inferschema %} true {% else %} false {% endif %}"
+        isRequired: true
+
+      - displayName: Stage Name
+        attributeName: stageName
+        type: textBox
+        default: 'Enter stage name-stage_name'
+        enableIf: "{% if config.intextstage or config.inferschema%} true {% else %} false {% endif %}"
+        isRequired: true
+
+      - displayName: Path or subfolder 
+        attributeName: subfolder
+        type: textBox
+        default: 'Enter folder name in stage if applicable-folder/subfolder'
+        enableIf: "{% if config.intextstage or config.inferschema%} true {% else %} false {% endif %}"
+        isRequired: false
+
+      - displayName: File Name(s) (Ex:a.csv,b.csv )
+        attributeName: fileNames
+        type: textBox
+        enableIf: "{% if config.intextstage or config.inferschema %} true {% else %} false {% endif %}"
+        isRequired: false
+
+      - displayName: File Pattern (Ex:.*hea.*[.]csv)
+        attributeName: filePattern
+        type: textBox
+        enableIf: "{% if config.intextstage and config.inferschema == false%} true {% else %} false {% endif %}"
+        isRequired: false
+
+      - displayName: External URI
+        attributeName: externalURI
+        type: textBox
+        default: 'Enter external URI-Ex:s3://snowflake-docs'
+        enableIf: "{% if config.extlocation %} true {% else %} false {% endif %}"
+        isRequired: false
+
+      - displayName: Storage Integration
+        attributeName: storageintegration
+        type: textBox
+        enableIf: "{% if config.extlocation %} true {% else %} false {% endif %}"
+        isRequired: false
+
+    - groupName: File Format Options
+      items:
+      - displayName: File Format Definition
+        attributeName: fileFormatType
+        type: dropdownSelector
+        default: "File Format Name"
+        options:
+        - File Format Name
+        - File Format Values
+        
+
+      - displayName: Coalesce Storage Location of File Format 
+        attributeName: fileFormatLoc
+        type: textBox
+        default: ""
+        enableIf: "{% if config.fileFormatType == 'File Format Name'%} true {% else %} false {% endif %}"  
+
+      - displayName: File Format Name
+        attributeName: fileFormatName
+        type: textBox
+        default: ""
+        enableIf: "{% if config.fileFormatType == 'File Format Name' %} true {% else %} false {% endif %}"
+       
+      - displayName: Parse header
+        attributeName: parsehdr1
+        enableIf: "{% if  config.inferschema == true and config.fileType in ('CSV') and config.fileFormatType == 'File Format Name'   %} true {% else %} false {% endif %}"
+        type: toggleButton
+        default: true
+        isRequired: false  
+
+      - displayName: File Type
+        attributeName: fileType
+        type: dropdownSelector
+        default: CSV
+        options:
+        - "CSV"
+        - "PARQUET"
+        - "JSON"
+        - "AVRO"
+        - "ORC"
+        - "XML"
+        isRequired: false
+
+      - displayName: Compression
+        attributeName: compression
+        enableIf: "{% if (config.fileFormatType != 'File Format Name' and config.fileType not in ('ORC')) %} true {% else %} false {% endif %}"
+        type: dropdownSelector
+        options:
+        - "AUTO"
+        - "GZIP"
+        - "BZ2"
+        - "BROTLI"
+        - "ZSTD"
+        - "DEFLATE"
+        - "RAW_DEFLATE"
+        - "NONE"
+        - ""
+        isRequired: false
+        
+
+      - displayName: Record delimiter
+        attributeName: recDelim
+        type: textBox
+        enableIf: "{% if (config.fileFormatType != 'File Format Name' and config.fileType in ('CSV')) %} true {% else %} false {% endif %}"
+        default: "\n"
+        isRequired: false
+
+      - displayName: Field delimiter
+        attributeName: fieldDelim
+        type: textBox
+        enableIf: "{% if (config.fileFormatType != 'File Format Name' and config.fileType in ('CSV'))%} true {% else %} false {% endif %}"
+        default: ","
+        isRequired: false
+
+      - displayName: Field optionally enclosed by
+        attributeName: fieldEnclosed
+        type: textBox
+        enableIf: "{% if (config.fileFormatType != 'File Format Name' and config.fileType in ('CSV')) %} true {% else %} false {% endif %}"
+        default: "\\042"
+        isRequired: false
+
+      - displayName: Number of header lines to skip
+        attributeName: skipHeader
+        type: textBox
+        enableIf: "{% if config.fileFormatType != 'File Format Name' and config.fileType in ('CSV') and config.inferschema == false %} true {% else %} false {% endif %}"
+        default: "1"
+        isRequired: false
+
+      - displayName: Parse header
+        attributeName: parsehdr
+        enableIf: "{% if  config.inferschema == true and config.fileType in ('CSV') and config.fileFormatType != 'File Format Name'   %} true {% else %} false {% endif %}"
+        type: toggleButton
+        default: true
+        isRequired: false  
+      
+
+      - displayName: Encoding
+        attributeName: encoding
+        type: dropdownSelector
+        default: "UTF8"
+        options:
+        - "BIG5"
+        - "UTF8"
+        - "EUCJP"
+        - "EUCKR"
+        - "GB18030"
+        - "IBM420"
+        - "IBM424"
+        - "IBM949"
+        - "ISO2022CN"
+        - "ISO2022JP"
+        - "ISO2022KR"
+        - "ISO88591"
+        - "ISO88592"
+        - "ISO88595"
+        - "ISO88596"
+        - "ISO88597"
+        - "ISO88598"
+        - "ISO88599"
+        - "ISO885915"
+        - "KOI8R"
+        - "SHIFTJIS"
+        - "UTF16"
+        - "UTF16BE"
+        - "UTF16LE"
+        - "UTF32"
+        - "UTF32BE"
+        - "UTF32LE"
+        - "WINDOWS874"
+        - "WINDOWS949"
+        - "WINDOWS1250"
+        - "WINDOWS1251"
+        - "WINDOWS1252"
+        - "WINDOWS1253"
+        - "WINDOWS1254"
+        - "WINDOWS1255"
+        - "WINDOWS1256"
+        - ""
+        isRequired: false
+        enableIf: "{% if (config.fileFormatType != 'File Format Name' and config.fileType in ('CSV')) %} true {% else %} false {% endif %}"
+      
+      - displayName: Strip Outer Array
+        attributeName: stripouterarray
+        enableIf: "{% if (config.fileFormatType != 'File Format Name' and config.fileType in ('JSON') )  %} true {% else %} false {% endif %}"
+        type: toggleButton
+        default: true
+        isRequired: false   
+
+      - displayName: Date format
+        attributeName: dateformat
+        type: textBox
+        enableIf: "{% if (config.fileFormatType != 'File Format Name' and config.fileType in ('JSON','CSV') and config.inferschema == false)   %} true {% else %} false {% endif %}"
+        isRequired: false
+
+      - displayName: Time format
+        attributeName: timeformat
+        type: textBox
+        enableIf: "{% if (config.fileFormatType != 'File Format Name' and config.fileType in ('JSON','CSV') ) and config.inferschema == false%} true {% else %} false {% endif %}"
+        isRequired: false
+
+      - displayName: Timestamp format
+        attributeName: timestampformat
+        type: textBox
+        enableIf: "{% if (config.fileFormatType != 'File Format Name' and config.fileType in ('JSON','CSV'))  and config.inferschema == false%} true {% else %} false {% endif %}"
+        isRequired: false
+      
+      - displayName: Trim space
+        attributeName: trimSpace
+        enableIf: "{% if (config.fileFormatType != 'File Format Name' and config.fileType not in ('XML'))%} true {% else %} false {% endif %}"
+        type: toggleButton
+        isRequired: false
+
+      - displayName: Replace invalid characters
+        attributeName: replaceinvalidcharacters
+        enableIf: "{% if (config.fileFormatType != 'File Format Name')%} true {% else %} false {% endif %}"
+        type: toggleButton
+        default: true
+        isRequired: false    
+      
+      - displayName: Using vectorised scanner
+        attributeName: usevectscan
+        type: toggleButton
+        enableIf: "{% if (config.fileFormatType != 'File Format Name' and config.fileType in ('PARQUET') )   %} true {% else %} false {% endif %}"
+        isRequired: false
+
+    - groupName: Extended CSV File Format Options
+      enableIf: "{% if config.fileFormatType != 'File Format Name' and config.fileType in ('CSV')%} true {% else %} false {% endif %}"
+      items:
+
+      - displayName: Skip blank lines
+        attributeName: skipBlankLines
+        enableIf: "{% if config.fileFormatType != 'File Format Name' and config.fileType in ('CSV') and config.inferschema == false %} true {% else %} false {% endif %}"
+        type: toggleButton
+        isRequired: false
+
+      - displayName: Nulls for empty field
+        attributeName: emptyfield
+        enableIf: "{% if (config.fileFormatType != 'File Format Name' and config.fileType in ('CSV'))%} true {% else %} false {% endif %}"
+        type: toggleButton
+        default: true
+        isRequired: false    
+
+      - displayName: Skip byte order mark
+        attributeName: bytemark
+        enableIf: "{% if (config.fileFormatType != 'File Format Name' and config.fileType in ('CSV'))%} true {% else %} false {% endif %}"
+        type: toggleButton
+        default: true
+        isRequired: false 
+      
+      - displayName: Parsing error for column mismatch
+        attributeName: columnmismatch
+        enableIf: "{% if (config.fileFormatType != 'File Format Name' and config.fileType in ('CSV'))%} true {% else %} false {% endif %}"
+        type: toggleButton
+        default: false
+        isRequired: false 
+       
+      - displayName: Multiple lines
+        attributeName: mulline
+        enableIf: "{% if (config.fileFormatType != 'File Format Name' and config.fileType in ('CSV') )  %} true {% else %} false {% endif %}"
+        type: toggleButton
+        default: true
+        isRequired: false   
+      
+      - displayName: Binary format
+        attributeName: binformat
+        enableIf: "{% if (config.fileFormatType != 'File Format Name' and config.fileType in ('CSV')) %} true {% else %} false {% endif %}"
+        type: dropdownSelector
+        default: "HEX"
+        options:
+        - "HEX"
+        - "BASE64"
+        - "UTF8"
+        - ""
+        isRequired: false
+
+      - displayName: Replace values with NULL
+        attributeName: nullchar
+        type: textBox
+        enableIf: "{% if (config.fileFormatType != 'File Format Name' and config.fileType in ('CSV')and config.inferschema == false) %} true {% else %} false {% endif %}"
+        default: ('\N')
+        isRequired: false   
+
+      - displayName: Escape optionally enclosed by
+        attributeName: escapeenclosed
+        type: textBox
+        enableIf: "{% if (config.fileFormatType != 'File Format Name' and config.fileType in ('CSV')) %} true {% else %} false {% endif %}"
+        default: "\\134"
+        isRequired: false   
+
+      - displayName: Escape enclosed/unenclosed values
+        attributeName: escapeval
+        type: textBox
+        enableIf: "{% if (config.fileFormatType != 'File Format Name' and config.fileType in ('CSV')) %} true {% else %} false {% endif %}"
+        isRequired: false 
+
+    - groupName: Copy Options
+      enableIf: "{%if config.inferschema %} false {%else%} true {%endif%}"
+      items:
+
+      - displayName: On Error Behavior
+        attributeName: onError
+        type: dropdownSelector
+        default: ""
+        options:
+        - "CONTINUE"
+        - "SKIP_FILE"
+        - "SKIP_FILE_<num>"
+        - "SKIP_FILE_<num>%"
+        - "ABORT_STATEMENT"
+        - ""
+        isRequired: false
+
+      - displayName: Specify the number of errors that can be skipped
+        attributeName: errornumber
+        type: textBox
+        enableIf: "{% if config.onError in('SKIP_FILE_<num>','SKIP_FILE_<num>%') or config.onError1 in('SKIP_FILE_<num>','SKIP_FILE_<num>%') %} true {% else %} false {% endif %}"
+        isRequired: false
+
+      - displayName: Size Limit
+        attributeName: sizeLimit
+        type: textBox
+        isRequired: false
+
+      - displayName: Purge Behavior
+        attributeName: purgeBehavior
+        type: dropdownSelector
+        default: ""
+        options:
+        - "TRUE"
+        - "FALSE"
+        - ""
+        isRequired: false
+        
+      - displayName: Return Failed Only
+        attributeName: returnFailedOnly
+        type: dropdownSelector
+        default: ""
+        options:
+        - "TRUE"
+        - "FALSE"
+        - ""
+        isRequired: false
+
+      - displayName: Enforce Length
+        attributeName: enforceLength
+        type: dropdownSelector
+        default: ""
+        options:
+        - "TRUE"
+        - "FALSE"
+        - ""
+        isRequired: false
+
+      - displayName: Truncate Columns
+        attributeName: truncateColumns
+        type: dropdownSelector
+        default: ""
+        options:
+        - "TRUE"
+        - "FALSE"
+        - ""
+        isRequired: false
+
+      - displayName: Force
+        attributeName: forceLoad
+        type: dropdownSelector
+        default: ""
+        options:
+        - "TRUE"
+        - "FALSE"
+        - ""
+        isRequired: false
+        enableIf: "{% if parameters.loadType != 'Reload'  %} true {% else %} false {% endif %}"
+
+      - displayName: Load Uncertain Files
+        attributeName: loadUncertainFiles
+        type: dropdownSelector
+        default: ""
+        options:
+        - "TRUE"
+        - "FALSE"
+        - ""
+        isRequired: false  
+        
+    systemColumns:
+
+    - displayName: SRC
+      transform: '$1'
+      dataType: VARIANT
+      placement: end
+      attributeName: sysJSON
+
+    - displayName: LOAD_TIMESTAMP
+      transform: 'current_timestamp()::timestamp_ntz'
+      dataType: TIMESTAMP_NTZ
+      placement: end
+      attributeName: sysLdTs
+
+    - displayName: FILENAME
+      transform: 'METADATA$FILENAME'
+      dataType: STRING
+      placement: end
+      attributeName: sysFlNm
+
+    - displayName: FILE_ROW_NUMBER
+      transform: 'METADATA$FILE_ROW_NUMBER'
+      dataType: NUMBER
+      placement: end
+      attributeName: sysFlRwNm
+
+    - displayName: FILE_LAST_MODIFIED
+      transform: 'METADATA$FILE_LAST_MODIFIED'
+      dataType: TIMESTAMP_NTZ
+      placement: end
+      attributeName: sysFlLtMd
+
+    - displayName: SCAN_TIME
+      transform: 'METADATA$START_SCAN_TIME'
+      dataType: TIMESTAMP_NTZ
+      placement: end
+      attributeName: sysFlScTm
+name: CopyIntoC
+type: NodeType

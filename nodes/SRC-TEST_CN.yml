@@ -1,0 +1,98 @@
+fileVersion: 1
+id: 357181de-0fc9-4eff-b476-90add9982f35
+name: TEST_CN
+operation:
+  config:
+    binformat: HEX
+    bytemark: true
+    columnmismatch: false
+    compression: ""
+    dateformat: ""
+    emptyfield: true
+    encoding: UTF8
+    enforceLength: ""
+    errornumber: ""
+    escapeenclosed: \134
+    escapeval: ""
+    externalURI: Enter external URI-Ex:s3://snowflake-docs
+    extlocation: false
+    fieldDelim: ","
+    fieldEnclosed: \042
+    fileFormatLoc: SRC
+    fileFormatName: CSV_FORMAT
+    fileFormatType: File Format Name
+    fileNames: ""
+    filePattern: ""
+    fileType: CSV
+    forceLoad: ""
+    inferschema: true
+    intextstage: true
+    loadUncertainFiles: ""
+    mulline: true
+    nullchar: ('\N')
+    onError: ""
+    parsehdr: true
+    parsehdr1: true
+    purgeBehavior: ""
+    recDelim: |+
+
+    replaceinvalidcharacters: true
+    returnFailedOnly: ""
+    sizeLimit: ""
+    skipBlankLines: false
+    skipHeader: "1"
+    stageName: AZURE_STAGE
+    stageStorageLocationName: SRC
+    storageintegration: ""
+    stripouterarray: true
+    subfolder: ""
+    timeformat: ""
+    timestampformat: ""
+    trimSpace: false
+    truncateBefore: true
+    truncateColumns: ""
+    usevectscan: false
+  database: ""
+  deployEnabled: true
+  description: ""
+  isMultisource: false
+  locationName: SRC
+  materializationType: table
+  metadata:
+    appliedNodeTests: []
+    columns:
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: 741f9a39-c7b3-419e-8a0e-bfcd5512fb7e
+          stepCounter: 357181de-0fc9-4eff-b476-90add9982f35
+        config: {}
+        dataType: VARIANT
+        defaultValue: ""
+        description: ""
+        name: SRC
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: $1
+        sysJSON: true
+    cteString: ""
+    enabledColumnTestIDs: []
+    sourceMapping:
+      - aliases: {}
+        customSQL:
+          customSQL: ""
+        dependencies: []
+        join:
+          joinCondition: ""
+        name: TEST_CN
+        noLinkRefs: []
+  name: TEST_CN
+  overrideSQL: false
+  schema: ""
+  sqlType: "14"
+  type: sql
+  version: 1
+type: Node
