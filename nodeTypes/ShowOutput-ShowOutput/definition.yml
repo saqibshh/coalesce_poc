@@ -1,0 +1,60 @@
+fileVersion: 1
+id: "16"
+isDisabled: false
+metadata:
+  defaultStorageLocation: null
+  error: null
+  nodeMetadataSpec: |
+    capitalized: SHOW OUTPUT
+    short: 'SHOW'
+    tagColor: '#9b59b6'
+    isDisabled: false
+    plural: Show Outputs
+
+    deployStrategy: advanced
+    isColumnResyncEnabled: true
+
+    config:
+    - groupName: General Options
+      items:
+     
+      - type: materializationSelector
+        default: view
+        options:
+        - view
+        - table
+        - transient table
+        isRequired: true 
+      
+      - type: label
+        attributeName: note1
+        displayName: 
+                       "NOTE:
+                       \n
+                       This node simply shows the output of the upstream node
+                       without any transformations or modifications"
+
+      - displayName: Limit Rows
+        attributeName: limitRows
+        type: textBox
+        default: "1000"
+        isRequired: false
+        helpText: 'Maximum number of rows to display (0 for no limit)'
+
+      - displayName: Include Row Numbers
+        attributeName: includeRowNumbers
+        type: toggleButton
+        default: true
+        isRequired: false
+        helpText: 'Add row numbers to the output'
+        
+    systemColumns:
+
+    - displayName: ROW_NUMBER
+      transform: 'ROW_NUMBER() OVER (ORDER BY 1)'
+      dataType: NUMBER
+      placement: start
+      attributeName: sysRowNumber
+
+name: ShowOutput
+type: NodeType

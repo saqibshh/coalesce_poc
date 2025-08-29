@@ -6,8 +6,8 @@ Coalesce permits you to copy and modify this script for the purposes of using wi
 does not permit copying or modification for any other purpose.  
 #}
 {# == Node Type Version        : 1  == #}
-{# == Node Type Name           : Flatten Variant to Columns == #}
-{# == Node Type Description    : This node flattens VARIANT fields from external tables into proper columns with inferred data types == #}
+{# == Node Type Name           : Show Output == #}
+{# == Node Type Description    : This node simply shows the output of the upstream node == #}
 {#Release date:20250109 Version:1.0.0#}
 
 {# Storage Location-database and schema #}
@@ -15,33 +15,35 @@ does not permit copying or modification for any other purpose.
 {% set db = storageLocations | selectattr('name', 'equalto', srcSchName) | map(attribute='database') | first %}
 {% set sch = storageLocations | selectattr('name', 'equalto', srcSchName) | map(attribute='schema') | first %}
 
-{# Use upstream source (external table) #}
+{# Use upstream source #}
 {% set sourceDb = sources[0].location.database %}
 {% set sourceSch = sources[0].location.schema %}
 {% set sourceTable = sources[0].name %}
 
-{# Create the target table/view based on materialization type #}
+{# Main query #}
 {% if config.materializationType == 'view' %}
-    {{ stage('Create Flattened View') }}
+    {{ stage('Create Show Output View') }}
     
     CREATE OR REPLACE VIEW "{{ db }}"."{{ sch }}"."{{ node.name }}" AS
-    SELECT 
-        -- Placeholder columns - will be replaced during run
-        'PLACEHOLDER' AS placeholder_column
-    FROM {{ sourceDb }}.{{ sourceSch }}.{{ sourceTable }}
-    WHERE 1=0;  -- Empty view initially
-    
 {% else %}
-    {{ stage('Create Flattened Table') }}
+    {{ stage('Create Show Output Table') }}
     
     {% if config.materializationType == 'transient table' %}
-        CREATE OR REPLACE TRANSIENT TABLE "{{ db }}"."{{ sch }}"."{{ node.name }}" (
+        CREATE OR REPLACE TRANSIENT TABLE "{{ db }}"."{{ sch }}"."{{ node.name }}" AS
     {% else %}
-        CREATE OR REPLACE TABLE "{{ db }}"."{{ sch }}"."{{ node.name }}" (
+        CREATE OR REPLACE TABLE "{{ db }}"."{{ sch }}"."{{ node.name }}" AS
     {% endif %}
-    
-    -- Placeholder columns - will be replaced during run with actual flattened columns
-    placeholder_column STRING
-    );
-    
 {% endif %}
+
+SELECT 
+    {% if config.includeRowNumbers %}
+        ROW_NUMBER() OVER (ORDER BY 1) AS ROW_NUMBER,
+    {% endif %}
+    {% for col in sources[0].columns %}
+        "{{ col.name }}"
+        {%- if not loop.last -%}, {% endif %}
+    {%- endfor %}
+FROM {{ sourceDb }}.{{ sourceSch }}.{{ sourceTable }}
+{% if config.limitRows and config.limitRows != "0" and config.limitRows != "" %}
+    LIMIT {{ config.limitRows }}
+{% endif %};
