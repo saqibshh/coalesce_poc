@@ -1,0 +1,190 @@
+{#
+    Copyright (c) 2023 Coalesce. All rights reserved.
+This script and its associated documentation are confidential and proprietary to Coalesce.
+Unauthorized reproduction, distribution, or disclosure of this material is strictly prohibited.
+Coalesce permits you to copy and modify this script for the purposes of using with Coalsce but
+does not permit copying or modification for any other purpose.  
+#}
+{# == Node Type Version        : 1  == #}
+{# == Node Type Name           : Azure External Table with Flattening == #}
+{# == Node Type Description    : Standalone external table that connects to Azure, flattens VARIANT data == #}
+{#Release date:20250109 Version:1.0.0#}
+
+{# Storage Location-database and schema #}
+{% set srcSchName = node.location.name %}
+{% set db = storageLocations | selectattr('name', 'equalto', srcSchName) | map(attribute='database') | first %}
+{% set sch = storageLocations | selectattr('name', 'equalto', srcSchName) | map(attribute='schema') | first %}
+
+{# Parse external table location #}
+{% set externalTableParts = config.externalTableLocation.split('.') %}
+{% set extDb = externalTableParts[0] %}
+{% set extSch = externalTableParts[1] %}
+{% set extTable = externalTableParts[2] %}
+
+{% if config.inferAndFlatten %}
+
+{# Step 1: Create or refresh external table if needed #}
+{{ stage('Ensure External Table Exists') }}
+
+CREATE EXTERNAL TABLE IF NOT EXISTS {{ config.externalTableLocation }} (
+    {{ config.variantColumnName }} VARIANT AS (VALUE::VARIANT)
+)
+LOCATION = '{{ config.azureContainerURL }}'
+{% if config.autoRefresh %}
+AUTO_REFRESH = TRUE
+{% endif %}
+{% if config.filePattern %}
+PATTERN = '{{ config.filePattern }}'
+{% endif %}
+FILE_FORMAT = (TYPE = {{ config.fileFormat }})
+INTEGRATION = '{{ config.azureStorageIntegration }}';
+
+{# Step 2: Sample data for schema inference #}
+{{ stage('Sample Data for Schema Inference') }}
+
+CREATE OR REPLACE TEMPORARY TABLE temp_sample_data AS
+SELECT {{ config.variantColumnName }} AS variant_data
+FROM {{ config.externalTableLocation }}
+LIMIT {{ config.sampleSize }};
+
+{# Step 3: Flatten and get unique keys with data types #}
+{{ stage('Analyze Schema from Flattened Data') }}
+
+CREATE OR REPLACE TEMPORARY TABLE temp_schema AS
+SELECT 
+    f.key AS column_name,
+    CASE 
+        WHEN TRY_CAST(f.value AS BOOLEAN) IS NOT NULL AND f.value::STRING IN ('true', 'false', 'TRUE', 'FALSE', '1', '0') THEN 'BOOLEAN'
+        WHEN TRY_CAST(f.value AS NUMBER) IS NOT NULL AND f.value::STRING NOT LIKE '%.%' THEN 'NUMBER'
+        WHEN TRY_CAST(f.value AS FLOAT) IS NOT NULL THEN 'FLOAT'
+        WHEN TRY_CAST(f.value AS TIMESTAMP_NTZ) IS NOT NULL THEN 'TIMESTAMP_NTZ'
+        WHEN TRY_CAST(f.value AS DATE) IS NOT NULL THEN 'DATE'
+        WHEN IS_OBJECT(f.value) THEN 'VARIANT'
+        WHEN IS_ARRAY(f.value) THEN 'VARIANT'
+        ELSE 'STRING'
+    END AS data_type,
+    COUNT(*) AS occurrence_count
+FROM temp_sample_data s,
+LATERAL FLATTEN(input => s.variant_data, recursive => false) f
+WHERE f.value IS NOT NULL
+GROUP BY f.key, 
+    CASE 
+        WHEN TRY_CAST(f.value AS BOOLEAN) IS NOT NULL AND f.value::STRING IN ('true', 'false', 'TRUE', 'FALSE', '1', '0') THEN 'BOOLEAN'
+        WHEN TRY_CAST(f.value AS NUMBER) IS NOT NULL AND f.value::STRING NOT LIKE '%.%' THEN 'NUMBER'
+        WHEN TRY_CAST(f.value AS FLOAT) IS NOT NULL THEN 'FLOAT'
+        WHEN TRY_CAST(f.value AS TIMESTAMP_NTZ) IS NOT NULL THEN 'TIMESTAMP_NTZ'
+        WHEN TRY_CAST(f.value AS DATE) IS NOT NULL THEN 'DATE'
+        WHEN IS_OBJECT(f.value) THEN 'VARIANT'
+        WHEN IS_ARRAY(f.value) THEN 'VARIANT'
+        ELSE 'STRING'
+    END
+ORDER BY f.key;
+
+{# Step 4: Create final schema with most common data type per column #}
+{{ stage('Determine Final Schema') }}
+
+CREATE OR REPLACE TEMPORARY TABLE temp_final_schema AS
+SELECT 
+    column_name,
+    data_type,
+    ROW_NUMBER() OVER (PARTITION BY column_name ORDER BY occurrence_count DESC) AS rn
+FROM temp_schema
+QUALIFY rn = 1
+ORDER BY column_name;
+
+{# Step 5: Create table with flattened and typed data #}
+{{ stage('Create Table with Flattened and Typed Data') }}
+
+{% if config.materializationType == 'view' %}
+    CREATE OR REPLACE VIEW "{{ db }}"."{{ sch }}"."{{ node.name }}" AS
+{% elif config.materializationType == 'transient table' %}
+    CREATE OR REPLACE TRANSIENT TABLE "{{ db }}"."{{ sch }}"."{{ node.name }}" AS
+{% else %}
+    CREATE OR REPLACE TABLE "{{ db }}"."{{ sch }}"."{{ node.name }}" AS
+{% endif %}
+
+WITH flattened_data AS (
+    SELECT 
+        f.key AS column_name,
+        f.value AS column_value,
+        METADATA$FILENAME AS source_filename,
+        METADATA$FILE_ROW_NUMBER AS source_row_number
+        {%- for col in columns %}
+            {%- if col.sysLoadTs %},
+                current_timestamp()::timestamp_ntz AS load_timestamp
+            {%- endif %}
+        {%- endfor %}
+    FROM {{ config.externalTableLocation }},
+    LATERAL FLATTEN(input => {{ config.variantColumnName }}, recursive => false) f
+),
+typed_data AS (
+    SELECT 
+        source_filename,
+        source_row_number,
+        {%- for col in columns %}
+            {%- if col.sysLoadTs %}
+                load_timestamp,
+            {%- endif %}
+        {%- endfor %}
+        -- Dynamic pivot with proper data types
+        {% for i in range(1, 51) %}  {# Support up to 50 columns #}
+        MAX(CASE WHEN column_name = (SELECT column_name FROM temp_final_schema WHERE ROW_NUMBER() OVER (ORDER BY column_name) = {{ i }}) THEN 
+            CASE (SELECT data_type FROM temp_final_schema WHERE ROW_NUMBER() OVER (ORDER BY column_name) = {{ i }})
+                WHEN 'BOOLEAN' THEN TRY_CAST(column_value AS BOOLEAN)
+                WHEN 'NUMBER' THEN TRY_CAST(column_value AS NUMBER)
+                WHEN 'FLOAT' THEN TRY_CAST(column_value AS FLOAT)
+                WHEN 'TIMESTAMP_NTZ' THEN TRY_CAST(column_value AS TIMESTAMP_NTZ)
+                WHEN 'DATE' THEN TRY_CAST(column_value AS DATE)
+                WHEN 'VARIANT' THEN column_value
+                ELSE column_value::STRING
+            END
+        END) AS {{ '"COL_' + i|string + '"' }}{% if not loop.last %},{% endif %}
+        {% endfor %}
+    FROM flattened_data
+    GROUP BY source_filename, source_row_number
+    {%- for col in columns %}
+        {%- if col.sysLoadTs %}, load_timestamp{% endif %}
+    {%- endfor %}
+)
+SELECT * FROM typed_data;
+
+{# Step 6: Add system columns if configured #}
+{%- for col in columns %}
+    {%- if col.sysSourceFilename %}
+        ALTER TABLE "{{ db }}"."{{ sch }}"."{{ node.name }}" 
+        ADD COLUMN "SOURCE_FILENAME" STRING DEFAULT METADATA$FILENAME;
+    {%- endif %}
+{%- endfor %}
+
+{# Cleanup temporary tables #}
+DROP TABLE IF EXISTS temp_sample_data;
+DROP TABLE IF EXISTS temp_schema;
+DROP TABLE IF EXISTS temp_final_schema;
+
+{% else %}
+
+{# Simple external table without flattening #}
+{{ stage('Create Simple External Table Reference') }}
+
+{% if config.materializationType == 'view' %}
+    CREATE OR REPLACE VIEW "{{ db }}"."{{ sch }}"."{{ node.name }}" AS
+{% elif config.materializationType == 'transient table' %}
+    CREATE OR REPLACE TRANSIENT TABLE "{{ db }}"."{{ sch }}"."{{ node.name }}" AS
+{% else %}
+    CREATE OR REPLACE TABLE "{{ db }}"."{{ sch }}"."{{ node.name }}" AS
+{% endif %}
+
+SELECT 
+    {{ config.variantColumnName }},
+    METADATA$FILENAME AS source_filename,
+    METADATA$FILE_ROW_NUMBER AS source_row_number
+    {%- for col in columns %}
+        {%- if col.sysLoadTs %},
+            current_timestamp()::timestamp_ntz AS "LOAD_TIMESTAMP"
+        {%- elif col.sysSourceFilename %},
+            METADATA$FILENAME AS "SOURCE_FILENAME"
+        {%- endif %}
+    {%- endfor %}
+FROM {{ config.externalTableLocation }};
+
+{% endif %}

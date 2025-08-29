@@ -1,0 +1,117 @@
+fileVersion: 1
+id: "18"
+isDisabled: false
+metadata:
+  defaultStorageLocation: null
+  error: null
+  nodeMetadataSpec: |
+    capitalized: AZURE EXTERNAL TABLE WITH FLATTENING
+    short: 'AZURE FLAT'
+    tagColor: '#0078d4'
+    isDisabled: false
+    plural: Azure External Tables with Flattening
+
+    deployStrategy: advanced
+    isColumnResyncEnabled: true
+
+    config:
+    - groupName: General Options
+      items:
+     
+      - type: materializationSelector
+        default: table
+        options:
+        - table
+        - transient table
+        - view
+        isRequired: true 
+      
+      - displayName: Infer Schema and Flatten
+        attributeName: inferAndFlatten
+        type: toggleButton
+        default: true
+        isRequired: false
+        helpText: 'Automatically infer schema from VARIANT data and flatten into columns'
+
+      - displayName: Variant Column Name
+        attributeName: variantColumnName
+        type: textBox
+        default: 'VALUE'
+        isRequired: true
+        enableIf: "{% if config.inferAndFlatten %} true {% else %} false {% endif %}"
+        helpText: 'Name of the VARIANT column to flatten'
+
+      - displayName: Sample Size
+        attributeName: sampleSize
+        type: textBox
+        default: "1000"
+        isRequired: false
+        enableIf: "{% if config.inferAndFlatten %} true {% else %} false {% endif %}"
+        helpText: 'Number of rows to sample for schema inference'
+
+    - groupName: Azure External Table Configuration
+      items:
+
+      - displayName: External Table Location
+        attributeName: externalTableLocation
+        type: textBox
+        default: 'DATABASE.SCHEMA.EXTERNAL_TABLE_NAME'
+        isRequired: true
+        helpText: 'Fully qualified external table name'
+
+      - displayName: Azure Storage Integration
+        attributeName: azureStorageIntegration
+        type: textBox
+        default: 'AZURE_STORAGE_INTEGRATION'
+        isRequired: true
+        helpText: 'Name of the Azure storage integration'
+
+      - displayName: Azure Container URL
+        attributeName: azureContainerURL
+        type: textBox
+        default: 'azure://storageaccount.blob.core.windows.net/container/'
+        isRequired: true
+        helpText: 'Azure blob storage container URL'
+
+      - displayName: File Pattern
+        attributeName: filePattern
+        type: textBox
+        default: '.*\\.json'
+        isRequired: false
+        helpText: 'File pattern to match (e.g., .*\\.json for JSON files)'
+
+      - displayName: File Format
+        attributeName: fileFormat
+        type: dropdownSelector
+        default: "JSON"
+        options:
+        - "JSON"
+        - "PARQUET"
+        - "CSV"
+        - "AVRO"
+        isRequired: true
+        helpText: 'File format of the data files'
+
+      - displayName: Auto Refresh
+        attributeName: autoRefresh
+        type: toggleButton
+        default: true
+        isRequired: false
+        helpText: 'Automatically refresh external table metadata'
+        
+    systemColumns:
+
+    - displayName: LOAD_TIMESTAMP
+      transform: 'current_timestamp()::timestamp_ntz'
+      dataType: TIMESTAMP_NTZ
+      placement: end
+      attributeName: sysLoadTs
+
+    - displayName: SOURCE_FILENAME
+      transform: 'METADATA$FILENAME'
+      dataType: STRING
+      placement: end
+      attributeName: sysSourceFilename
+
+name: ExternalTableInferred
+type: NodeType
